@@ -83,6 +83,8 @@ NVIDIA'nın [firmware güncelleme yolu](https://docs.nvidia.com/jetson/orin-nano
 
 1. SD kart imajını [JetPack 6.2.1 sayfasından](https://developer.nvidia.com/embedded/jetpack-sdk-621) indirin: `jp62-r1-orin-nano-sd-card-image.zip`.
 2. balenaEtcher → *Flash from file* → zip dosyası → microSD kart → *Flash*. Zip'i açmanıza gerek yok.
+   - **macOS:** Etcher'ı Uygulamalar klasöründen çalıştırın ve açıldıktan sonra birkaç saniye bekleyip dosyayı seçin. Aksi hâlde `requestMetadata is not a function` hatası çıkabiliyor. Safari zip'i kendiliğinden açmaya çalışıp "başarısız" diyebilir; bunun önemi yok.
+   - **Windows:** Kart takılınca ve yazma bittikten sonra Windows "sürücüyü kullanmadan önce biçimlendirmeniz gerekir" diye defalarca sorar. Hepsinde **İptal**'e basın; biçimlendirirseniz imaj bozulur. Etcher hata verirse sağ tıklayıp *Yönetici olarak çalıştır*'ı deneyin.
 3. microSD'yi kartın modülünün altındaki yuvaya takın. Ekranı, klavyeyi ve Ethernet'i bağlayın, sonra gücü verin.
 4. 4. adımdaki ilk açılış kurulumuna geçin.
 
