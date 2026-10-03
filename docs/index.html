@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Dikey kameralı depo envanter sistemi için etkileşimli bitirme projesi yol haritası.">
+  <title>Depo Atlası · Bitirme Projesi Yol Haritası</title>
+  <style>
+    :root {
+      --ink: #142d31;
+      --muted: #5c7070;
+      --paper: #f4f6f0;
+      --line: #dbe4dc;
+      --white: #ffffff;
+      --lime: #d5f27b;
+      --teal: #0b7a72;
+      --shadow: 0 22px 60px rgba(13, 38, 39, .10);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body { margin: 0; color: var(--ink); background: var(--paper); }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #ef9b55; outline-offset: 4px; }
+    .page { max-width: 1540px; margin: auto; padding: 24px 36px 48px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 4px 2px 22px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); font-weight: 850; letter-spacing: -.045em; font-size: 21px; }
+    .brand-mark { width: 32px; height: 32px; border-radius: 11px; display: grid; place-items: center; background: var(--ink); color: var(--lime); font-size: 17px; line-height: 1; }
+    .top-note { font-size: 12px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .hero { background: #103b3a; border-radius: 28px; color: #f5fbf5; min-height: 290px; display: grid; grid-template-columns: 1.35fr .7fr; overflow: hidden; position: relative; box-shadow: var(--shadow); }
+    .hero::before { content: ""; position: absolute; width: 600px; height: 600px; right: -140px; top: -260px; border-radius: 50%; border: 1px solid rgba(211, 242, 123, .13); box-shadow: 0 0 0 80px rgba(211, 242, 123, .035), 0 0 0 160px rgba(211, 242, 123, .025); pointer-events: none; }
+    .hero-copy { padding: 48px 54px; position: relative; z-index: 1; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--lime); font-size: 12px; text-transform: uppercase; font-weight: 800; letter-spacing: .15em; }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; background: var(--lime); border-radius: 50%; }
+    h1 { font-size: clamp(36px, 4vw, 60px); line-height: 1.02; letter-spacing: -.06em; margin: 24px 0 18px; max-width: 790px; }
+    h1 em { color: var(--lime); font-style: normal; }
+    .hero-copy p { max-width: 620px; margin: 0; color: #c5dad6; line-height: 1.65; font-size: 15px; }
+    .hero-art { position: relative; min-height: 290px; display: grid; place-items: center; padding: 25px 34px 18px 0; }
+    .hero-art svg { width: min(100%, 380px); height: auto; filter: drop-shadow(0 18px 20px rgba(0,0,0,.15)); }
+    .quickfacts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+    .fact { padding: 15px 18px; background: var(--white); border: 1px solid #e7ebe6; border-radius: 16px; min-height: 79px; }
+    .fact small { display: block; color: var(--muted); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; font-weight: 800; margin-bottom: 7px; }
+    .fact strong { font-size: 14px; line-height: 1.25; display: block; }
+    .fact.pending { border-style: dashed; background: #fffdf8; }
+    .section-intro { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin: 43px 2px 22px; }
+    .section-intro h2 { font-size: clamp(27px, 2.5vw, 36px); letter-spacing: -.05em; margin: 0 0 5px; }
+    .section-intro p { margin: 0; color: var(--muted); font-size: 14px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 13px 17px; justify-content: flex-end; }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 355px; gap: 18px; align-items: start; }
+    .route-shell { border-radius: 24px; background: #eaf0e8; border: 1px solid #dfe8df; overflow: hidden; min-width: 0; }
+    .route-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; background: #f8faf6; border-bottom: 1px solid #dfe8df; padding: 16px 24px; font-size: 12px; font-weight: 780; color: var(--muted); letter-spacing: .04em; }
+    .route-top .live { display: inline-flex; gap: 8px; align-items: center; color: var(--teal); }
+    .route-top .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #46b887; box-shadow: 0 0 0 4px #e4f5e9; }
+    .route-map { position: relative; padding: 45px 34px 42px; background-image: radial-gradient(#ccd9d0 .8px, transparent .8px); background-size: 18px 18px; }
+    .route-line { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .route-line path { fill: none; stroke: #8faea5; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .route-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 69px 18px; position: relative; z-index: 1; }
+    .stage { position: relative; appearance: none; border: 1px solid #d5e0d8; border-radius: 18px; min-height: 158px; width: 100%; padding: 18px 14px 14px; background: #fff; color: var(--ink); text-align: left; cursor: pointer; box-shadow: 0 9px 22px rgba(24, 58, 53, .055); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .stage:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(24,58,53,.14); }
+    .stage[aria-pressed="true"] { background: #133e3c; border-color: #133e3c; color: #fff; box-shadow: 0 16px 30px rgba(13,60,55,.23); }
+    .stage::before { content: ""; position: absolute; width: 10px; height: 10px; background: var(--category); border: 3px solid #eaf0e8; border-radius: 50%; left: 50%; top: -17px; transform: translateX(-50%); box-shadow: 0 0 0 2px #a3bcb1; }
+    .stage:nth-child(n+6) { grid-row: 2; }
+    .stage:nth-child(6) { grid-column: 5; }
+    .stage:nth-child(7) { grid-column: 4; }
+    .stage:nth-child(8) { grid-column: 3; }
+    .stage:nth-child(9) { grid-column: 2; }
+    .stage:nth-child(10) { grid-column: 1; }
+    .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 18px; }
+    .stage-code { width: 31px; height: 31px; display: grid; place-items: center; background: color-mix(in srgb, var(--category) 17%, white); border-radius: 9px; color: var(--ink); font-weight: 850; font-size: 14px; }
+    .stage[aria-pressed="true"] .stage-code { background: var(--lime); }
+    .stage-arrow { opacity: .47; font-size: 18px; line-height: 1; }
+    .stage-title { display: block; font-size: 14px; font-weight: 850; line-height: 1.22; letter-spacing: -.025em; min-height: 34px; }
+    .stage-meta { display: block; font-size: 11px; font-weight: 750; color: var(--muted); margin-top: 10px; }
+    .stage[aria-pressed="true"] .stage-meta { color: #b8d0c7; }
+    .route-bottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid #dfe8df; padding: 13px 24px; background: #f8faf6; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .route-bottom strong { color: var(--ink); }
+    .detail { background: #fff; border: 1px solid #e5ebe5; border-radius: 24px; padding: 25px; box-shadow: 0 13px 34px rgba(18,51,44,.06); position: sticky; top: 20px; min-height: 483px; }
+    .detail-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 28px; }
+    .detail-kicker { text-transform: uppercase; letter-spacing: .13em; color: var(--teal); font-size: 11px; font-weight: 850; }
+    .detail-counter { color: #82918e; font-size: 11px; font-weight: 800; }
+    .detail-icon { height: 52px; width: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 25px; margin-bottom: 18px; background: #e7f3db; }
+    .detail h3 { font-size: 29px; letter-spacing: -.055em; line-height: 1.06; margin: 0 0 14px; }
+    .detail-summary { font-size: 14px; line-height: 1.64; color: #516462; margin: 0 0 22px; }
+    .detail-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; font-weight: 850; color: #7a8b88; margin-bottom: 10px; }
+    .detail ul { margin: 0 0 22px; padding: 0; list-style: none; display: grid; gap: 9px; }
+    .detail li { display: flex; align-items: flex-start; gap: 9px; color: #273f3d; font-size: 12.5px; line-height: 1.42; }
+    .detail li::before { content: "↗"; color: var(--teal); font-weight: 900; flex: 0 0 auto; }
+    .output { padding: 14px 15px; border-radius: 13px; background: #f2f7ef; border: 1px solid #e0ebd9; }
+    .output strong { display: block; font-size: 10px; color: var(--teal); text-transform: uppercase; letter-spacing: .11em; margin-bottom: 7px; }
+    .output span { font-size: 12.5px; line-height: 1.47; display: block; }
+    .detail-nav { display: flex; justify-content: space-between; margin-top: 18px; gap: 10px; }
+    .detail-nav button { appearance: none; border: 1px solid #dfe9e1; border-radius: 9px; padding: 8px 11px; background: #fff; color: var(--ink); font-size: 11px; font-weight: 800; cursor: pointer; }
+    .detail-nav button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+    .detail-nav button:disabled { opacity: .35; cursor: default; }
+    .lower { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-top: 18px; }
+    .panel { background: #fff; border: 1px solid #e5ebe5; border-radius: 23px; padding: 26px 28px; }
+    .panel h2 { margin: 0 0 7px; font-size: 23px; letter-spacing: -.04em; }
+    .panel > p { color: var(--muted); margin: 0 0 20px; line-height: 1.55; font-size: 13px; }
+    .system-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .system-unit { padding: 16px; background: #f6f8f3; border: 1px solid #e7ede5; border-radius: 13px; min-height: 106px; }
+    .system-unit .unit-icon { font-size: 21px; display: block; margin-bottom: 11px; }
+    .system-unit strong { display: block; font-size: 13px; margin-bottom: 5px; }
+    .system-unit small { display: block; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .important { margin-top: 13px; background: #fff8e8; border: 1px solid #f4e4ba; border-radius: 12px; color: #6b5531; padding: 11px 14px; font-size: 12px; line-height: 1.5; }
+    .metric-list { display: grid; gap: 11px; }
+    .metric { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid #edf0eb; font-size: 12px; line-height: 1.4; }
+    .metric:last-child { border-bottom: 0; padding-bottom: 0; }
+    .metric strong { font-size: 12px; }
+    .metric span { color: var(--muted); }
+    footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px 4px 0; color: #758784; font-size: 11px; line-height: 1.4; }
+    footer strong { color: var(--ink); }
+    @media (max-width: 1300px) {
+      .workspace { grid-template-columns: 1fr; }
+      .detail { position: static; min-height: 0; }
+      .detail ul { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px 18px; }
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-art { display: none; }
+      .quickfacts { grid-template-columns: repeat(2, 1fr); }
+      .section-intro { display: block; }
+      .legend { justify-content: flex-start; margin-top: 17px; }
+      .route-grid { grid-template-columns: 1fr; gap: 19px; }
+      .stage, .stage:nth-child(n+6) { grid-column: 1; grid-row: auto; min-height: 93px; padding: 14px 18px 14px 60px; }
+      .stage-head { position: absolute; left: 15px; top: 17px; margin: 0; }
+      .stage-arrow { display: none; }
+      .stage-title { min-height: 0; font-size: 15px; }
+      .stage-meta { margin-top: 5px; }
+      .stage::before { left: 31px; top: -12px; }
+      .route-map { padding: 31px 24px; }
+      .lower { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page { padding: 13px 13px 30px; }
+      .topbar { padding: 6px 2px 16px; }
+      .top-note { display: none; }
+      .hero { border-radius: 21px; min-height: 0; }
+      .hero-copy { padding: 32px 25px 35px; }
+      h1 { font-size: 37px; margin: 20px 0 14px; }
+      .hero-copy p { font-size: 13px; }
+      .quickfacts { gap: 8px; margin-top: 10px; }
+      .fact { padding: 13px; min-height: 75px; }
+      .fact strong { font-size: 12px; }
+      .section-intro { margin-top: 32px; }
+      .section-intro h2 { font-size: 29px; }
+      .route-top, .route-bottom { padding-left: 16px; padding-right: 16px; }
+      .route-top { font-size: 10px; }
+      .route-map { padding-left: 16px; padding-right: 16px; }
+      .detail, .panel { padding: 22px 19px; }
+      .detail ul { grid-template-columns: 1fr; }
+      .system-flow { grid-template-columns: 1fr; }
+      .system-unit { min-height: 0; }
+      footer { display: block; }
+      footer span { display: block; margin-bottom: 5px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .stage { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="brand" href="#baslangic" aria-label="Depo Atlası başlangıç"><span class="brand-mark" aria-hidden="true">▦</span> depo atlası<span style="color:#8aa39c">.</span></a>
+      <span class="top-note">Bitirme projesi · Etkileşimli sistem haritası</span>
+    </div>
+
+    <section class="hero" id="baslangic" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">Ortak çalışma haritası</span>
+        <h1 id="hero-title">Rafları gören,<br><em>stoğu anlayan</em> sistem.</h1>
+        <p>Dört kameralı dikey platformla rafları görüntüleme; barkod, OCR ve görsel analizle envanter çıkarma. Aşağıdaki duraklara tıklayarak her aşamanın işini ve beklenen çıktısını görebilirsin.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 390 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="86" y="24" width="237" height="213" rx="8" stroke="#7BA8A0" stroke-width="3"/>
+          <path d="M86 92H323M86 164H323" stroke="#7BA8A0" stroke-width="3"/>
+          <rect x="106" y="53" width="62" height="38" rx="3" fill="#DBEBCE"/><rect x="174" y="42" width="49" height="49" rx="3" fill="#A8C8B5"/><rect x="232" y="55" width="69" height="36" rx="3" fill="#D8B590"/>
+          <rect x="108" y="115" width="58" height="47" rx="3" fill="#D8B590"/><rect x="174" y="125" width="52" height="37" rx="3" fill="#DBEBCE"/><rect x="236" y="113" width="64" height="49" rx="3" fill="#A8C8B5"/>
+          <rect x="111" y="188" width="72" height="46" rx="3" fill="#A8C8B5"/><rect x="192" y="178" width="59" height="56" rx="3" fill="#D8B590"/><rect x="259" y="192" width="42" height="42" rx="3" fill="#DBEBCE"/>
+          <path d="M119 65V85M124 65V85M130 65V85M137 65V85M146 65V85M151 65V85M157 65V85" stroke="#1A3B3B" stroke-width="2"/>
+          <path d="M246 126V151M251 126V151M259 126V151M264 126V151M271 126V151M279 126V151M287 126V151" stroke="#1A3B3B" stroke-width="2"/>
+          <path d="M99 17V246" stroke="#B8E977" stroke-width="2" stroke-dasharray="4 7"/>
+          <rect x="34" y="102" width="51" height="50" rx="14" fill="#D5F27B"/>
+          <circle cx="49" cy="119" r="6" fill="#103B3A"/><circle cx="69" cy="119" r="6" fill="#103B3A"/><circle cx="49" cy="137" r="6" fill="#103B3A"/><circle cx="69" cy="137" r="6" fill="#103B3A"/>
+          <path d="M43 153V218M75 153V218" stroke="#D5F27B" stroke-width="5" stroke-linecap="round"/>
+          <rect x="26" y="218" width="62" height="17" rx="4" fill="#789E8A"/><circle cx="38" cy="239" r="8" fill="#D5F27B"/><circle cx="77" cy="239" r="8" fill="#D5F27B"/>
+          <path d="M322 43H345L355 53M322 124H345L355 134M322 198H345L355 208" stroke="#B8E977" stroke-width="1.5" stroke-dasharray="3 4"/>
+          <circle cx="355" cy="53" r="4" fill="#B8E977"/><circle cx="355" cy="134" r="4" fill="#B8E977"/><circle cx="355" cy="208" r="4" fill="#B8E977"/>
+        </svg>
+      </div>
+    </section>
+
+    <div class="quickfacts" aria-label="Mevcut durum">
+      <div class="fact"><small>Elimizde</small><strong>Jetson Orin Nano Developer Kit</strong></div>
+      <div class="fact"><small>Kamera hedefi</small><strong>4 CSI kamera</strong></div>
+      <div class="fact"><small>Mevcut hareket</small><strong>Arduino kontrollü araç motorları</strong></div>
+      <div class="fact pending"><small>Sıfırdan yapılacak</small><strong>Dikey kamera mekanizması</strong></div>
+    </div>
+
+    <div class="section-intro" id="harita">
+      <div><h2>Proje rotası</h2><p>10 durak · Takvim yok · Bir aşamaya tıklayıp ayrıntıyı incele</p></div>
+      <div class="legend" aria-label="Aşama türleri">
+        <span><i style="background:#6e9bd2"></i>Hazırlık</span>
+        <span><i style="background:#de9b68"></i>Donanım</span>
+        <span><i style="background:#68b6aa"></i>Yazılım ve veri</span>
+        <span><i style="background:#aa91d2"></i>Yapay zekâ</span>
+        <span><i style="background:#92b46f"></i>Entegrasyon</span>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <section class="route-shell" aria-label="Tıklanabilir proje yol haritası">
+        <div class="route-top"><span>BAŞLANGIÇ <span aria-hidden="true">→</span> ÇALIŞAN SİSTEM</span><span class="live">Plan güncellenebilir</span></div>
+        <div class="route-map" id="route-map">
+          <svg class="route-line" id="route-line" aria-hidden="true"><path id="route-path"></path></svg>
+          <div class="route-grid" id="route-grid"></div>
+        </div>
+        <div class="route-bottom"><span><strong>Önerilen ilk adım:</strong> Kamera modellerini netleştirip tek kamerayla örnek görüntü almak.</span><span>↗ Durak seç</span></div>
+      </section>
+      <aside class="detail" id="detail" aria-live="polite" aria-labelledby="detail-title">
+        <div class="detail-top"><span class="detail-kicker" id="detail-category"></span><span class="detail-counter" id="detail-counter"></span></div>
+        <div class="detail-icon" id="detail-icon" aria-hidden="true"></div>
+        <h3 id="detail-title" tabindex="-1"></h3>
+        <p class="detail-summary" id="detail-summary"></p>
+        <span class="detail-label">Yapılacaklar</span>
+        <ul id="detail-tasks"></ul>
+        <div class="output"><strong>Bu duraktan çıkış</strong><span id="detail-output"></span></div>
+        <div class="detail-nav"><button type="button" id="prev-stage">← Önceki durak</button><button type="button" id="next-stage">Sonraki durak →</button></div>
+      </aside>
+    </div>
+
+    <div class="lower">
+      <section class="panel" aria-labelledby="system-heading">
+        <h2 id="system-heading">Sistem nasıl çalışacak?</h2>
+        <p>İlk çalışan sürüm, araç sabit dururken dikey tarama yapabilir. Yatay araç hareketi, bu akış sağlamlaştıktan sonra eklenir.</p>
+        <div class="system-flow">
+          <div class="system-unit"><span class="unit-icon" aria-hidden="true">◉</span><strong>Görüntüle</strong><small>Kamera platformu rafın belirlenen seviyelerinde durur ve fotoğraf alır.</small></div>
+          <div class="system-unit"><span class="unit-icon" aria-hidden="true">▥</span><strong>Oku ve doğrula</strong><small>Barkod çözülür; gerekirse OCR dener. Koli ve raf gözü eşleştirilir.</small></div>
+          <div class="system-unit"><span class="unit-icon" aria-hidden="true">✓</span><strong>Envanteri çıkar</strong><small>Kimlik, konum, sayı, görüntü ve güven durumu kaydedilir.</small></div>
+        </div>
+        <div class="important"><strong>Açık karar:</strong> Barkod tekil koli kimliği mi, yoksa aynı ürüne ait SKU mu? Bu, koli sayımının nasıl yapılacağını belirler.</div>
+      </section>
+      <section class="panel" aria-labelledby="measure-heading">
+        <h2 id="measure-heading">Başarıyı nasıl ölçeceğiz?</h2>
+        <p>AI katkısını aynı fotoğraflarda klasik yöntemle karşılaştıracağız.</p>
+        <div class="metric-list">
+          <div class="metric"><strong>Kod okuma</strong><span>Tüm karakterleri doğru okunan barkodların oranı.</span></div>
+          <div class="metric"><strong>Ek kurtarma</strong><span>Klasik yöntemin okuyamadıklarından AI ile doğru okunanlar.</span></div>
+          <div class="metric"><strong>Yanlış kayıt</strong><span>Yanlış kimlik veya yanlış raf gözüyle oluşturulan kayıtlar.</span></div>
+          <div class="metric"><strong>Sistem</strong><span>Tarama süresi, konuma tekrar gelme ve gerekirse koli sayma hatası.</span></div>
+        </div>
+      </section>
+    </div>
+
+    <footer><span><strong>Depo Atlası</strong> · Bitirme projesi çalışma haritası</span><span>Tek HTML dosyası · İnternet bağlantısı gerekmez · Aşamalar ilerledikçe güncellenir</span></footer>
+  </main>
+
+  <script>
+    const stages = [
+      { code: 'A', title: 'Parçaları tanı', category: 'Hazırlık', color: '#6e9bd2', icon: '⌑', summary: 'Sistemin elindeki donanımı ve üretmesi gereken envanter kaydını kesinleştir.', tasks: ['Jetson ve kamera modüllerinin model kodlarını kaydet.', 'Raf, koli etiketi ve barkoddan örnekler topla.', 'Barkodun SKU mu tekil koli kimliği mi olduğunu belirle.', 'Jetson, mevcut Arduino ve kurulacak dikey eksenin rollerini çiz.'], output: 'Kesin parça listesi, ilk bağlantı şeması ve net bir envanter kaydı tanımı.' },
+      { code: 'B', title: 'Jetson’u kur', category: 'Hazırlık', color: '#6e9bd2', icon: '▣', summary: 'Jetson Orin Nano Developer Kit için yeniden kurulabilir temel yazılım ortamını hazırla.', tasks: ['microSD veya NVMe SSD tercihini kesinleştir.', 'Karta uygun resmî sistem imajını yükle.', 'İlk açılış, ağ, depolama ve güç davranışını kontrol et.', 'Kurulum adımlarını ve sürümleri not et.'], output: 'Açılıp çalışan, gerektiğinde aynı şekilde yeniden kurulabilen Jetson.' },
+      { code: 'C', title: 'Kameraları doğrula', category: 'Donanım', color: '#de9b68', icon: '◉', summary: 'Tek kamerayla gerçek barkod görüntüsü al; dört kameranın bağlantı yolunu ölçerek kararlaştır.', tasks: ['Önce tek CSI kamerayla fotoğraf ve video kaydet.', 'Odak, görüş alanı, ışık, mesafe ve barkod piksel boyutunu incele.', 'İkinci kamerayı ve ardından hedeflenen dört kamera düzenini sına.', 'Kablo, bağlantı topolojisi ve eşzamanlı akış kararını doğrula.'], output: 'Tek kamerayla tekrarlanabilir görüntü ve dört kamera için doğrulanmış bağlantı planı.' },
+      { code: 'D', title: 'Dikey mekanizmayı kur', category: 'Donanım', color: '#de9b68', icon: '↕', summary: 'Dört kamerayı taşıyacak yükselme sistemini sıfırdan tasarla ve prototiple.', tasks: ['Raf yüksekliğini, erişim aralığını ve duruş noktalarını ölç.', 'Kamera taşıyıcısı, kızak/ray, denge ve tahrik çözümünü seç.', 'Hareketli kablo, sınır ve titreşim sorunlarını çöz.', 'Kamera yüküyle aynı noktaya tekrar gelebilmeyi test et.'], output: 'Yük altında güvenli biçimde yükselip alçalan mekanizma prototipi.' },
+      { code: 'E', title: 'Hareketi kontrol et', category: 'Donanım', color: '#de9b68', icon: '⇅', summary: 'Seçilen dikey ekseni Jetson’dan komut alarak belirli raf seviyelerinde durdur.', tasks: ['Aktüatör, sürücü ve kontrol kartı uyumunu netleştir.', 'Konum geri bildirimi ve limit anahtarlarını bağla.', 'Jetson’dan konum komutu ve hata yanıtı akışını kur.', 'Dur → titreşim yatışsın → görüntü al sırasını doğrula.'], output: 'Her çekim seviyesine tekrar giden ve arıza durumunda duran kontrol akışı.' },
+      { code: 'F', title: 'Temel okuma hattı', category: 'Yazılım ve veri', color: '#68b6aa', icon: '▥', summary: 'AI eklemeden önce çalışan barkod ve raf kaydı hattını oluştur.', tasks: ['Görüntüyü tarama, raf gözü ve kamera kimliğiyle kaydet.', 'Klasik barkod çözücüyü tam görüntüde dene.', 'Aynı kolinin tekrar okumalarını tek kayda indir.', 'Sonucu görüntü kanıtıyla basit envanter listesinde göster.'], output: 'Bir rafı baştan sona tarayan ve AI karşılaştırması için temel oluşturan sürüm.' },
+      { code: 'G', title: 'Veriyi hazırla', category: 'Yazılım ve veri', color: '#68b6aa', icon: '◫', summary: 'Kendi kameranızın ve rafınızın görüntülerinden güvenilir eğitim ve test seti kur.', tasks: ['Farklı yükseklik, açı, ışık ve koli yoğunluğunda görüntü topla.', 'Barkod/etiket konumunu, gerçek kodu ve raf gözünü işaretle.', 'Aynı kolinin ardışık karelerini eğitim ve teste dağıtma.', 'Zor koşulları içeren bağımsız test kümesi ayır.'], output: 'Etiketleme kuralı olan, eğitim/doğrulama/test bölmelerine ayrılmış veri seti.' },
+      { code: 'H', title: 'AI katmanını eğit', category: 'Yapay zekâ', color: '#aa91d2', icon: '✳', summary: 'Kendi görüntülerinizle barkod/etiket tespit modelini eğit; gerekirse OCR ile yedek okuma ekle.', tasks: ['Küçük bir nesne tespit modelini kendi verinizle fine-tune et.', 'Tespit edilen alanı orijinal fotoğraftan kırpıp aynı çözücüye ver.', 'Okunamayan etiketler için hazır ve uyarlanmış OCR’yi karşılaştır.', 'Bulanıklık veya boş göz modülünü gerçek hata dağılımına göre seç.'], output: 'Eğitilmiş modeller ve klasik yöntemle aynı test kümesinde karşılaştırılmış sonuçlar.' },
+      { code: 'I', title: 'Canlı taramayı göster', category: 'Entegrasyon', color: '#92b46f', icon: '✓', summary: 'Araç sabitken tüm dikey taramayı tek komutla çalıştır ve anlaşılır envanter üret.', tasks: ['Dikey konumları sırayla gez ve fotoğrafları işle.', 'Kimlik, raf gözü, koli sayısı ve görüntüyü birlikte göster.', 'Okunamayan veya çelişkili sonucu ayrı işaretle.', 'Aynı demo senaryosunu tekrar çalıştırıp ölçümleri kaydet.'], output: 'Tek komutla çalışan, kanıtlı stok listesi üreten prototip.' },
+      { code: 'J', title: 'Aracı bütünleştir', category: 'Entegrasyon', color: '#92b46f', icon: '➜', summary: 'Çalışan dikey taramayı mevcut aracın yatay hareketiyle birleştir. Bu aşama sonra ele alınacak.', tasks: ['Mevcut Arduino ve araç kontrol arayüzünü incele.', 'Raf önünde güvenilir durma konumunu tanımla.', 'Araç dururken tarama, bitince sonraki rafa geçiş sırasını ekle.', 'Birden fazla raf boyunca kayıtların karışmadığını doğrula.'], output: 'Birden fazla rafı gezen ve her raf için ayrı envanter kaydı çıkaran sistem.' }
+    ];
+
+    const grid = document.getElementById('route-grid');
+    const routeMap = document.getElementById('route-map');
+    const routeSvg = document.getElementById('route-line');
+    const routePath = document.getElementById('route-path');
+    let selected = 0;
+
+    stages.forEach((stage, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'stage';
+      button.style.setProperty('--category', stage.color);
+      button.setAttribute('aria-label', `${stage.code} durağı: ${stage.title}. Ayrıntıları aç`);
+      button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
+      button.innerHTML = `<span class="stage-head"><span class="stage-code">${stage.code}</span><span class="stage-arrow" aria-hidden="true">↗</span></span><span class="stage-title">${stage.title}</span><span class="stage-meta">${stage.category}</span>`;
+      button.addEventListener('click', () => selectStage(index, true));
+      button.addEventListener('keydown', event => {
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); focusStage(Math.min(index + 1, stages.length - 1)); }
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); focusStage(Math.max(index - 1, 0)); }
+      });
+      grid.appendChild(button);
+    });
+
+    function focusStage(index) {
+      selectStage(index, false);
+      grid.children[index].focus();
+    }
+
+    function selectStage(index, fromClick) {
+      selected = index;
+      const stage = stages[index];
+      [...grid.children].forEach((node, i) => node.setAttribute('aria-pressed', String(i === index)));
+      document.getElementById('detail-category').textContent = stage.category;
+      document.getElementById('detail-counter').textContent = `${String(index + 1).padStart(2, '0')} / ${stages.length}`;
+      document.getElementById('detail-icon').textContent = stage.icon;
+      document.getElementById('detail-icon').style.background = stage.color + '35';
+      document.getElementById('detail-title').textContent = stage.title;
+      document.getElementById('detail-summary').textContent = stage.summary;
+      document.getElementById('detail-output').textContent = stage.output;
+      const tasks = document.getElementById('detail-tasks');
+      tasks.replaceChildren(...stage.tasks.map(task => { const li = document.createElement('li'); li.textContent = task; return li; }));
+      document.getElementById('prev-stage').disabled = index === 0;
+      document.getElementById('next-stage').disabled = index === stages.length - 1;
+      if (fromClick && window.matchMedia('(max-width: 1300px)').matches) {
+        document.getElementById('detail').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+      }
+    }
+
+    document.getElementById('prev-stage').addEventListener('click', () => selectStage(Math.max(0, selected - 1), false));
+    document.getElementById('next-stage').addEventListener('click', () => selectStage(Math.min(stages.length - 1, selected + 1), false));
+
+    function drawRoute() {
+      const container = routeMap.getBoundingClientRect();
+      const points = [...grid.children].map(node => {
+        const rect = node.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2 - container.left, y: rect.top + rect.height / 2 - container.top };
+      });
+      routeSvg.setAttribute('viewBox', `0 0 ${container.width} ${container.height}`);
+      routePath.setAttribute('d', points.map((p, i) => `${i ? 'L' : 'M'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' '));
+    }
+    selectStage(0, false);
+    const observer = new ResizeObserver(drawRoute);
+    observer.observe(routeMap);
+    window.addEventListener('load', drawRoute);
+  </script>
+</body>
+</html>

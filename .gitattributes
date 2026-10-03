@@ -1,0 +1,14 @@
+# Satır sonlarını depoda LF olarak tut (Jetson Linux, macOS ve Windows arasında tutarlılık)
+* text=auto eol=lf
+
+*.sh   text eol=lf
+*.py   text eol=lf
+*.md   text eol=lf
+*.ino  text eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.pdf  binary
+*.stl  binary
+*.step binary

@@ -1,0 +1,59 @@
+# --- İşletim sistemi / editör ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- Veri seti, ham görüntüler ve model çıktıları ---
+# Büyük dosyalar git'e girmez; nerede tutulduğu docs/ altında belgelenir.
+data/
+datasets/
+runs/
+captures/
+*.mp4
+*.avi
+*.mkv
+*.h264
+*.pt
+*.pth
+*.onnx
+*.engine
+*.trt
+*.tflite
+
+# --- Veritabanı / günlük ---
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# --- Arduino / PlatformIO ---
+.pio/
+*.hex
+*.elf
+
+# --- Jetson imajları (çok büyük) ---
+*.iso
+*.img
+*.zip
