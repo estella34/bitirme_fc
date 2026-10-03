@@ -6,11 +6,33 @@ Yeni kararı en üste ekleyin. Durum: `açık` (henüz verilmedi), `kabul`, `de�
 
 | No | Tarih | Konu | Durum |
 |---|---|---|---|
+| K-005 | 2026-10-03 | Geliştirme ortamı iCloud dışında | kabul |
+| K-004 | 2026-10-03 | Yazılım yığını: FastAPI + SQLite + React/three.js | kabul |
 | K-003 | 2026-10-03 | Jetson depolama düzeni | açık |
 | K-002 | 2026-10-03 | Jetson JetPack sürümü | kabul |
 | K-001 | 2026-10-03 | Depo yapısı ve dokümantasyon düzeni | kabul |
 
 ---
+
+## K-005 — Geliştirme ortamı iCloud dışında
+
+**Durum:** kabul
+
+**Sorun:** Proje iCloud ile senkronize edilen Masaüstünde duruyor ve diskte yer az. macOS dosyaları buluta boşaltıyor, Python ve Node bu dosyaları okurken takılıyor; sunucu açılmıyor.
+
+**Karar:** `backend/.venv` ve `web/node_modules`, iCloud'un senkronize etmediği `.nosync` klasörlerinde tutuluyor (sembolik bağ ile). Kalıcı çözüm, projeyi iCloud dışındaki bir klasöre taşımak. Bu karar ekip arkadaşıyla birlikte verilecek.
+
+## K-004 — Yazılım yığını
+
+**Durum:** kabul
+
+**Karar ve gerekçe:**
+- **Arka uç:** Python + FastAPI. Kamera, AI ve kod okuma tarafıyla aynı dil; Jetson'da (Python 3.10) doğrudan çalışıyor. Canlı akış WebSocket ile.
+- **Veritabanı:** SQLite (WAL kipi). Ayrı bir veritabanı sunucusu gerektirmiyor, tek dosya, Jetson'da hafif. Veri modeli SQLAlchemy ile yazıldı; gerekirse PostgreSQL'e geçiş bağlantı adresini değiştirmek kadar kolay.
+- **Kod çözücü:** zxing-cpp. QR ve 1D/2D barkodları tek kütüphanede, C++ hızında çözüyor; aarch64 (Jetson) için hazır paketi var.
+- **Arayüz:** React + TypeScript + three.js (react-three-fiber). 3B çizim kullanıcının tarayıcısında yapılır, Jetson'un GPU'su AI'a kalır. Yazı tipleri pakete gömülü; internetsiz depo ağında çalışır.
+
+**Elenen:** Sunucu tarafında şablonlu HTML (3B dijital ikiz için yetersiz), ayrı bir PostgreSQL sunucusu (bu ölçek için gereksiz bakım yükü).
 
 ## K-003 — Jetson depolama düzeni
 

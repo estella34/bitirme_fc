@@ -1,0 +1,21 @@
+# Jetson'da envanter sunucusunu açılışta başlatan systemd birimi.
+# Kurulum:
+#   sudo cp jetson/envanter.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now envanter
+# Kullanıcı adı ve yollar KURULUM.md'deki varsayımlara göre (envanter, ~/bitirme, /data).
+
+[Unit]
+Description=Depo envanter sunucusu (API + arayüz)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=envanter
+WorkingDirectory=/home/envanter/bitirme/backend
+Environment=ENVANTER_DATA_DIR=/data/envanter
+ExecStart=/home/envanter/bitirme/backend/.venv/bin/envanter serve --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

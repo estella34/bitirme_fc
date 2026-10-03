@@ -1,0 +1,119 @@
+import { useState } from "react";
+import { ROBOT_STATE } from "../format";
+import { useStore, type View } from "../store";
+
+const TABS: { id: View; label: string }[] = [
+  { id: "depo", label: "Depo" },
+  { id: "inceleme", label: "İnceleme" },
+  { id: "taramalar", label: "Taramalar" },
+  { id: "okuma", label: "Okuma testi" },
+];
+
+const SPEEDS = [1, 2, 4, 8];
+
+export function TopBar() {
+  const view = useStore((s) => s.view);
+  const setView = useStore((s) => s.setView);
+  const warehouse = useStore((s) => s.twin?.warehouse);
+  const pending = useStore((s) => s.summary?.pending_review ?? 0);
+  const conn = useStore((s) => s.conn);
+  const robot = useStore((s) => s.robot);
+  const demo = useStore((s) => s.demo);
+  const startDemo = useStore((s) => s.startDemo);
+  const stopDemo = useStore((s) => s.stopDemo);
+  const [speed, setSpeed] = useState(4);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const run = async (fn: () => Promise<void>) => {
+    setBusy(true);
+    setErr(null);
+    try {
+      await fn();
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const robotText = !robot?.online
+    ? "Robot çevrimdışı"
+    : `Robot: ${ROBOT_STATE[robot.state] ?? robot.state}`;
+
+  return (
+    <header className="topbar">
+      <div className="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M8 6v20M24 6v20" />
+          <path className="beam" d="M8 12h16M8 20h16" />
+        </svg>
+        <div>
+          <strong>Depo Atlası</strong>
+          {warehouse && <span>{warehouse.name}</span>}
+        </div>
+      </div>
+
+      <nav className="tabs" aria-label="Bölümler">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            className="tab"
+            aria-current={view === t.id ? "page" : undefined}
+            onClick={() => setView(t.id)}
+          >
+            {t.label}
+            {t.id === "inceleme" && pending > 0 && <span className="count">{pending}</span>}
+          </button>
+        ))}
+      </nav>
+
+      <div className="status-cluster">
+        <span className={`conn conn-${conn}`} title={conn === "open" ? "Canlı bağlantı açık" : "Bağlantı kuruluyor"}>
+          {conn === "open" ? "Canlı" : conn === "connecting" ? "Bağlanıyor" : "Bağlantı koptu"}
+        </span>
+        <span className="robot-state">{robotText}</span>
+        <div className="demo-ctl">
+          {demo.running ? (
+            <button className="btn btn-stop" disabled={busy} onClick={() => run(stopDemo)}>
+              Taramayı durdur
+            </button>
+          ) : (
+            <>
+              <label className="sr-only" htmlFor="demo-speed">
+                Simülasyon hızı
+              </label>
+              <select id="demo-speed" value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
+                {SPEEDS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}×
+                  </option>
+                ))}
+              </select>
+              <button className="btn btn-primary" disabled={busy} onClick={() => run(() => startDemo(speed))}>
+                Demo taramayı başlat
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+      {err && (
+        <p className="topbar-error" role="alert">
+          {err}
+        </p>
+      )}
+      {demo.running && (
+        <div
+          className="progress"
+          role="progressbar"
+          aria-label="Tarama ilerlemesi"
+          aria-valuenow={Math.round((demo.progress ?? 0) * 100)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <i style={{ width: `${(demo.progress ?? 0) * 100}%` }} />
+        </div>
+      )}
+    </header>
+  );
+}

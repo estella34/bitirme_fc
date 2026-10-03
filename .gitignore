@@ -1,3 +1,6 @@
+# --- iCloud: .nosync ile biten klasörler senkronize edilmez (venv, node_modules, veri) ---
+*.nosync
+
 # --- İşletim sistemi / editör ---
 .DS_Store
 Thumbs.db
@@ -15,7 +18,7 @@ __pycache__/
 .eggs/
 build/
 dist/
-.venv/
+.venv
 venv/
 .env
 .env.*
@@ -50,7 +53,7 @@ captures/
 *.log
 
 # --- Arayüz (Node) ---
-node_modules/
+node_modules
 web/dist/
 *.tsbuildinfo
 

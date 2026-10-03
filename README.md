@@ -12,20 +12,41 @@ Projenin yapay zekâ katkısı, kendi depo görüntülerimizle fine-tune edilen 
 | B | Jetson kurulumu | **devam ediyor** — [kurulum rehberi](docs/jetson/KURULUM.md) |
 | C | Tek kamera deneyi | bekliyor |
 | D–E | Dikey mekanizma ve kontrolü | bekliyor |
-| F | AI'sız okuma hattı (baseline) | bekliyor |
+| F | AI'sız okuma hattı (baseline) | **yazılım hazır** — QR/barkod çözme, mutabakat, arayüz ([YAZILIM.md](docs/YAZILIM.md)); gerçek kamerayla denenmedi |
 | G–H | Veri seti ve AI katmanı | bekliyor |
 | I–J | Canlı demo ve araç entegrasyonu | bekliyor |
 
 Aşamaların ayrıntısı: [docs/YOL_HARITASI.md](docs/YOL_HARITASI.md) · tıklanabilir sürüm: [docs/index.html](docs/index.html)
 
+## Hızlı başlangıç
+
+```bash
+cd backend && python3.11 -m venv .venv && .venv/bin/pip install -e ".[dev]"
+```
+
+```bash
+cd web && npm install && npm run build
+```
+
+```bash
+cd backend && .venv/bin/envanter serve --port 8000
+```
+
+Sonra http://localhost:8000 adresini açıp **Demo taramayı başlat** düğmesine basın. Ayrıntılar, robot API'si ve Jetson kurulumu için: [docs/YAZILIM.md](docs/YAZILIM.md).
+
 ## Depo yapısı
 
 ```text
 .
+├── backend/                    # Python (FastAPI): API, kod okuma, mutabakat, LiDAR haritası, demo
+│   ├── envanter/
+│   └── tests/
+├── web/                        # React + three.js: 3B dijital ikiz, inceleme, taramalar, okuma testi
 ├── docs/
 │   ├── PROJE_BRIFINGI.md       # projeye yeni katılan için tam bağlam
 │   ├── YOL_HARITASI.md         # aşamalar, çıktılar, metrikler
 │   ├── MEKANIZMA_TASLAGI.md    # dikey kamera mekanizması taslağı
+│   ├── YAZILIM.md              # yazılım mimarisi, çalıştırma, robot API'si
 │   ├── KARARLAR.md             # teknik karar kaydı
 │   ├── index.html              # tıklanabilir yol haritası
 │   ├── donanim/                # donanım envanteri ve fotoğraflar
@@ -33,10 +54,11 @@ Aşamaların ayrıntısı: [docs/YOL_HARITASI.md](docs/YOL_HARITASI.md) · tıkl
 │   └── referans/               # referans görseller
 └── jetson/
     ├── scripts/                # Jetson'da çalışan kurulum / kontrol betikleri
+    ├── envanter.service        # sunucuyu açılışta başlatan systemd birimi
     └── kayitlar/               # Jetson'dan alınan sağlık kontrolü raporları
 ```
 
-İleride eklenecek klasörler: `envanter/` (Python uygulaması: görüntü alma, barkod, AI, envanter), `firmware/` (dikey eksen kontrolcüsü), `mekanik/` (CAD ve çizimler).
+İleride eklenecek klasörler: `firmware/` (dikey eksen kontrolcüsü), `mekanik/` (CAD ve çizimler), AI eğitim kodu.
 
 ## Donanım
 
