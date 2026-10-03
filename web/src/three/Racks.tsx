@@ -1,9 +1,10 @@
 import { Edges, Html } from "@react-three/drei";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
-import { memo, useMemo, type ReactElement } from "react";
-import { MeshBasicMaterial, MeshStandardMaterial } from "three";
-import { BEAM, KRAFT, RACK_BLUE, STATUS, hash01 } from "../format";
+import { createContext, memo, useContext, useEffect, useMemo, useRef, type ReactElement, type RefObject } from "react";
+import { type Group, MeshBasicMaterial, MeshStandardMaterial, type Object3D } from "three";
+import { STATUS, hash01 } from "../format";
 import { useStore } from "../store";
+import { SCENE, type ScenePalette } from "../theme";
 import type { LocationState, Rack } from "../types";
 import { deg, w } from "./coords";
 
@@ -13,51 +14,54 @@ const DECK_Z = 0.09; // kolinin oturduğu yükseklik (göz tabanına göre)
 type Kind = "ok" | "ghost" | "missing" | "unexpected" | "unknown" | "observed";
 
 // Paylaşılan malzemeler: yüzlerce koli aynı birkaç malzemeyi kullanır.
+// Renkleri temaya göre applyPalette() ile güncellenir.
 const mat = {
-  kraft: new MeshStandardMaterial({ color: KRAFT, roughness: 0.88 }),
-  ghost: new MeshStandardMaterial({
-    color: KRAFT,
-    roughness: 1,
-    transparent: true,
-    opacity: 0.13,
-    depthWrite: false,
-  }),
-  missing: new MeshBasicMaterial({
-    color: STATUS.conflict.color,
-    transparent: true,
-    opacity: 0.2,
-    depthWrite: false,
-  }),
-  unexpected: new MeshStandardMaterial({
-    color: STATUS.conflict.color,
-    emissive: STATUS.conflict.color,
-    emissiveIntensity: 0.35,
-    roughness: 0.6,
-  }),
-  unknown: new MeshStandardMaterial({
-    color: STATUS.unreadable.color,
-    emissive: STATUS.unreadable.color,
-    emissiveIntensity: 0.25,
-    roughness: 0.7,
-  }),
-  labelOk: new MeshBasicMaterial({ color: STATUS.verified.color }),
-  labelObserved: new MeshBasicMaterial({ color: STATUS.observed.color }),
-  upright: new MeshStandardMaterial({ color: RACK_BLUE, metalness: 0.35, roughness: 0.45 }),
-  beam: new MeshStandardMaterial({ color: BEAM, metalness: 0.25, roughness: 0.5 }),
-  deck: new MeshStandardMaterial({
-    color: "#22344a",
-    transparent: true,
-    opacity: 0.55,
-    roughness: 1,
-  }),
+  kraft: new MeshStandardMaterial({ roughness: 0.88 }),
+  ghost: new MeshStandardMaterial({ roughness: 1, transparent: true, depthWrite: false }),
+  missing: new MeshBasicMaterial({ transparent: true, opacity: 0.2, depthWrite: false }),
+  unexpected: new MeshStandardMaterial({ emissiveIntensity: 0.35, roughness: 0.6 }),
+  unknown: new MeshStandardMaterial({ emissiveIntensity: 0.25, roughness: 0.7 }),
+  labelOk: new MeshBasicMaterial(),
+  labelObserved: new MeshBasicMaterial(),
+  upright: new MeshStandardMaterial({ metalness: 0.35, roughness: 0.45 }),
+  beam: new MeshStandardMaterial({ metalness: 0.25, roughness: 0.5 }),
+  deck: new MeshStandardMaterial({ transparent: true, roughness: 1 }),
   hit: new MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
-  empty: new MeshBasicMaterial({
-    color: STATUS.empty.color,
-    transparent: true,
-    opacity: 0.35,
-    depthWrite: false,
-  }),
+  empty: new MeshBasicMaterial({ transparent: true, opacity: 0.35, depthWrite: false }),
 };
+
+function applyPalette(p: ScenePalette) {
+  mat.kraft.color.set(p.kraft);
+  mat.ghost.color.set(p.kraft);
+  mat.ghost.opacity = p.ghostOpacity;
+  mat.missing.color.set(p.status.conflict);
+  mat.unexpected.color.set(p.status.conflict);
+  mat.unexpected.emissive.set(p.status.conflict);
+  mat.unknown.color.set(p.status.unreadable);
+  mat.unknown.emissive.set(p.status.unreadable);
+  mat.labelOk.color.set(p.status.verified);
+  mat.labelObserved.color.set(p.status.observed);
+  mat.upright.color.set(p.upright);
+  mat.beam.color.set(p.beam);
+  mat.deck.color.set(p.deck);
+  mat.deck.opacity = p.deckOpacity;
+  mat.empty.color.set(p.status.empty);
+}
+applyPalette(SCENE.dark);
+
+/**
+ * Etiket gizleme: raf tabelaları ve göz etiketleri HTML olduğu için derinlik testine girmez.
+ * drei Html'in `occlude` özelliği, bu gruptaki raf/koli geometrisine ışın atıp arkada kalan
+ * etiketi gizler. Kenar çizgileri (Edges) ışın hedefi değildir; aksi hâlde çizgi eşiği
+ * yüzünden etiketler gereksiz yere kaybolur.
+ */
+const OccluderContext = createContext<RefObject<Group | null> | null>(null);
+const noRaycast = () => null;
+
+/** Etkin temanın 3B paleti. */
+export function usePalette(): ScenePalette {
+  return SCENE[useStore((s) => s.theme)];
+}
 
 /** Gözün son durumundan sahnede çizilecek kolileri çıkarır. */
 export function boxItems(loc: LocationState): { code: string; kind: Kind }[] {
@@ -80,21 +84,32 @@ export function boxItems(loc: LocationState): { code: string; kind: Kind }[] {
 
 export function Racks() {
   const racks = useStore((s) => s.twin?.racks);
+  const palette = usePalette();
   const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
+  useEffect(() => applyPalette(palette), [palette]);
 
   // "Hayalet koli": kayıp kolinin dolgusu yavaşça nefes alır.
   useFrame(({ clock }) => {
     if (!reduced) mat.missing.opacity = 0.12 + 0.16 * (0.5 + 0.5 * Math.sin(clock.elapsedTime * 3.2));
   });
 
+  const occluders = useRef<Group>(null);
   if (!racks) return null;
   return (
-    <>
-      {racks.map((r) => (
-        <RackModel key={r.id} rack={r} />
-      ))}
-    </>
+    <OccluderContext.Provider value={occluders}>
+      <group ref={occluders}>
+        {racks.map((r) => (
+          <RackModel key={r.id} rack={r} />
+        ))}
+      </group>
+    </OccluderContext.Provider>
   );
+}
+
+function useOccluders(): RefObject<Object3D>[] | undefined {
+  const ref = useContext(OccluderContext);
+  // Grup, etiketlerden önce bağlanır; ilk karede ref doludur.
+  return ref ? [ref as RefObject<Object3D>] : undefined;
 }
 
 const RackModel = memo(function RackModel({ rack }: { rack: Rack }) {
@@ -102,6 +117,7 @@ const RackModel = memo(function RackModel({ rack }: { rack: Rack }) {
   const height = rack.levels * rack.level_height_m + 0.12;
   const d = rack.depth_m;
   const locIds = useMemo(() => rack.locations.map((l) => l.id), [rack.locations]);
+  const occlude = useOccluders();
 
   const frame = useMemo(() => {
     const parts: ReactElement[] = [];
@@ -142,7 +158,12 @@ const RackModel = memo(function RackModel({ rack }: { rack: Rack }) {
   return (
     <group position={w(rack.x, rack.y, 0)} rotation-y={deg(rack.yaw_deg)}>
       {frame}
-      <Html position={[0.05, height + 0.3, 0]} zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
+      <Html
+        position={[0.05, height + 0.3, 0]}
+        zIndexRange={[5, 0]}
+        occlude={occlude}
+        style={{ pointerEvents: "none" }}
+      >
         <div className="rack-sign">{rack.code}</div>
       </Html>
       {locIds.map((id) => (
@@ -158,6 +179,8 @@ function LocationCell({ id, rack }: { id: number; rack: Rack }) {
   const hovered = useStore((s) => s.hoverId === id);
   const select = useStore((s) => s.select);
   const hover = useStore((s) => s.hover);
+  const palette = usePalette();
+  const occlude = useOccluders();
   if (!loc) return null;
 
   const bay = rack.bay_width_m;
@@ -207,14 +230,16 @@ function LocationCell({ id, rack }: { id: number; rack: Rack }) {
       >
         <boxGeometry args={[bay - 0.04, lh - DECK_Z, d]} />
         {(selected || hovered) && (
-          <Edges color={selected ? BEAM : "#9db4d3"} threshold={10} renderOrder={2} />
+          <Edges color={selected ? palette.beam : palette.hover} threshold={10} renderOrder={2} raycast={noRaycast} />
         )}
       </mesh>
       {(selected || hovered) && (
         <Html
-          position={[cx, base + lh - 0.02, 0.02]}
+          // Üstteki kirişin önünde ve biraz üstünde: kirişin içine düşerse ışın onu gizler.
+          position={[cx, base + lh + 0.06, 0.14]}
           center
           zIndexRange={[6, 0]}
+          occlude={occlude}
           style={{ pointerEvents: "none" }}
         >
           <div className={`cell-tag${selected ? " is-selected" : ""}`}>
@@ -237,6 +262,7 @@ function BoxModel({
   position: [number, number, number];
 }) {
   const [bw, bh, bd] = size;
+  const palette = usePalette();
   const material =
     kind === "ok" || kind === "observed"
       ? mat.kraft
@@ -251,9 +277,11 @@ function BoxModel({
     <group position={position}>
       <mesh material={material} renderOrder={kind === "missing" || kind === "ghost" ? 1 : 0}>
         <boxGeometry args={size} />
-        {kind === "missing" && <Edges color={STATUS.conflict.color} threshold={10} />}
-        {kind === "ghost" && <Edges color="#7d6a52" threshold={10} />}
-        {(kind === "ok" || kind === "observed") && <Edges color="#8a6438" threshold={10} />}
+        {kind === "missing" && <Edges color={palette.status.conflict} threshold={10} raycast={noRaycast} />}
+        {kind === "ghost" && <Edges color={palette.ghostEdge} threshold={10} raycast={noRaycast} />}
+        {(kind === "ok" || kind === "observed") && (
+          <Edges color={palette.kraftEdge} threshold={10} raycast={noRaycast} />
+        )}
       </mesh>
       {(kind === "ok" || kind === "observed") && (
         <mesh

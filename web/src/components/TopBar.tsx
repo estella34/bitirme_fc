@@ -21,6 +21,8 @@ export function TopBar() {
   const demo = useStore((s) => s.demo);
   const startDemo = useStore((s) => s.startDemo);
   const stopDemo = useStore((s) => s.stopDemo);
+  const theme = useStore((s) => s.theme);
+  const toggleTheme = useStore((s) => s.toggleTheme);
   const [speed, setSpeed] = useState(4);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -44,12 +46,15 @@ export function TopBar() {
   return (
     <header className="topbar">
       <div className="brand">
+        {/* "Göz": hem raf gözü (dikmeler + kirişler) hem de bakan göz. */}
         <svg viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M8 6v20M24 6v20" />
-          <path className="beam" d="M8 12h16M8 20h16" />
+          <path className="upright" d="M6 4v24M26 4v24" />
+          <path className="beam" d="M6 8.5h20M6 23.5h20" />
+          <path className="eye" d="M9.5 16c2.8-4 10.2-4 13 0-2.8 4-10.2 4-13 0z" />
+          <circle className="pupil" cx="16" cy="16" r="2.3" />
         </svg>
         <div>
-          <strong>Depo Atlası</strong>
+          <strong>DepoGöz</strong>
           {warehouse && <span>{warehouse.name}</span>}
         </div>
       </div>
@@ -73,6 +78,23 @@ export function TopBar() {
           {conn === "open" ? "Canlı" : conn === "connecting" ? "Bağlanıyor" : "Bağlantı koptu"}
         </span>
         <span className="robot-state">{robotText}</span>
+        <button
+          className="icon-btn"
+          onClick={toggleTheme}
+          aria-label={theme === "dark" ? "Aydınlık temaya geç" : "Karanlık temaya geç"}
+          title={theme === "dark" ? "Aydınlık tema" : "Karanlık tema"}
+        >
+          {theme === "dark" ? (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z" />
+            </svg>
+          )}
+        </button>
         <div className="demo-ctl">
           {demo.running ? (
             <button className="btn btn-stop" disabled={busy} onClick={() => run(stopDemo)}>

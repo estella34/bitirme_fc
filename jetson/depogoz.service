@@ -1,11 +1,11 @@
-# Jetson'da envanter sunucusunu açılışta başlatan systemd birimi.
+# Jetson'da DepoGöz sunucusunu açılışta başlatan systemd birimi.
 # Kurulum:
-#   sudo cp jetson/envanter.service /etc/systemd/system/
-#   sudo systemctl daemon-reload && sudo systemctl enable --now envanter
+#   sudo cp jetson/depogoz.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now depogoz
 # Kullanıcı adı ve yollar KURULUM.md'deki varsayımlara göre (envanter, ~/bitirme, /data).
 
 [Unit]
-Description=Depo envanter sunucusu (API + arayüz)
+Description=DepoGöz sunucusu (API + arayüz)
 After=network-online.target
 Wants=network-online.target
 
@@ -13,7 +13,7 @@ Wants=network-online.target
 User=envanter
 WorkingDirectory=/home/envanter/bitirme/backend
 Environment=ENVANTER_DATA_DIR=/data/envanter
-ExecStart=/home/envanter/bitirme/backend/.venv/bin/envanter serve --host 0.0.0.0 --port 8000
+ExecStart=/home/envanter/bitirme/backend/.venv/bin/depogoz serve --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=3
 

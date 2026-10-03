@@ -1,4 +1,4 @@
-# Yazılım: envanter sunucusu ve dijital ikiz arayüzü
+# DepoGöz yazılımı: envanter sunucusu ve dijital ikiz arayüzü
 
 Bu belge `backend/` (Python, FastAPI) ve `web/` (React, three.js) klasörlerindeki yazılımın nasıl çalıştığını, nasıl çalıştırılacağını ve robotun sunucuyla nasıl konuşacağını anlatır.
 
@@ -59,7 +59,7 @@ cd web && npm run build
 Sunucuyu başlatın, sonra tarayıcıda http://localhost:8000 adresini açın:
 
 ```bash
-cd backend && .venv/bin/envanter serve --port 8000
+cd backend && .venv/bin/depogoz serve --port 8000
 ```
 
 İlk açılışta veritabanı boşsa sistem bir **demo deposu** oluşturur. Üstteki "Demo taramayı başlat" düğmesi sanal robotu çalıştırır:
@@ -67,6 +67,8 @@ cd backend && .venv/bin/envanter serve --port 8000
 - Sentetik kamera görüntüleri **gerçek kod çözücüden** geçer.
 - Senaryoda bilinçli olarak 2 kayıp koli, 2 hasarlı etiket, 1 yanlış yere konmuş koli ve 1 kayıt dışı koli bulunur.
 - Tarama bitince sistemin bunların kaçını yakaladığı gösterilir.
+
+Arayüzde sağ üstteki düğmeyle aydınlık/karanlık tema arasında geçilir; seçim tarayıcıda hatırlanır, seçim yapılmadıysa sistem teması izlenir.
 
 Arayüz üzerinde çalışırken anlık yenileme için `npm run dev` kullanın (http://localhost:5173, API'yi :8000'e yönlendirir).
 
@@ -113,7 +115,7 @@ cd backend && python3.11 -m venv .venv.nosync && ln -s .venv.nosync .venv
    ```
 
    ```bash
-   sudo cp jetson/envanter.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now envanter
+   sudo cp jetson/depogoz.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now depogoz
    ```
 
 5. Aynı ağdaki herhangi bir cihazdan `http://depo-jetson.local:8000` adresini açın.

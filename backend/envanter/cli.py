@@ -1,4 +1,4 @@
-"""Komut satırı: `envanter serve`, `envanter demo-world`."""
+"""Komut satırı: `depogoz serve`, `depogoz demo-world`."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import argparse
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="envanter", description="Depo envanter sistemi")
+    parser = argparse.ArgumentParser(prog="depogoz", description="DepoGöz depo envanter sistemi")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     serve = sub.add_parser("serve", help="API + arayüz sunucusunu başlat")

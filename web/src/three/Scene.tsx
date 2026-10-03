@@ -4,20 +4,18 @@ import { useEffect, useMemo, useRef } from "react";
 import { Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { robotLive } from "../buffers";
-import { STATUS } from "../format";
 import { useStore } from "../store";
 import type { Rack, Warehouse } from "../types";
 import { w } from "./coords";
 import { MapCloud, ScanBeam } from "./MapCloud";
-import { Racks } from "./Racks";
+import { Racks, usePalette } from "./Racks";
 import { Robot, Trail } from "./Robot";
-
-const BG = "#0a111b";
 
 export function Scene() {
   const twin = useStore((s) => s.twin);
   const layers = useStore((s) => s.layers);
   const select = useStore((s) => s.select);
+  const palette = usePalette();
   if (!twin) return null;
   const { warehouse } = twin;
   const span = Math.max(warehouse.width_m, warehouse.length_m);
@@ -30,11 +28,14 @@ export function Scene() {
       onCreated={({ camera }) => camera.lookAt(...presetFor("perspektif", warehouse)[1])}
       onPointerMissed={() => select(null)}
     >
-      <color attach="background" args={[BG]} />
-      <fog attach="fog" args={[BG, span * 1.6, span * 4]} />
-      <hemisphereLight args={["#a9c1e0", "#0b121c", 0.75]} />
-      <directionalLight position={[warehouse.width_m * 0.7, 14, warehouse.length_m * 0.4]} intensity={1.3} />
-      <ambientLight intensity={0.18} />
+      <color attach="background" args={[palette.bg]} />
+      <fog attach="fog" args={[palette.bg, span * 1.6, span * 4]} />
+      <hemisphereLight args={[palette.hemiSky, palette.hemiGround, palette.hemi]} />
+      <directionalLight
+        position={[warehouse.width_m * 0.7, 14, warehouse.length_m * 0.4]}
+        intensity={palette.sun}
+      />
+      <ambientLight intensity={palette.ambient} />
 
       <Floor warehouse={warehouse} racks={twin.racks} />
       <MapCloud visible={layers.map} />
@@ -48,6 +49,7 @@ export function Scene() {
 }
 
 function Floor({ warehouse, racks }: { warehouse: Warehouse; racks: Rack[] }) {
+  const palette = usePalette();
   const W = warehouse.width_m;
   const L = warehouse.length_m;
   const outline = useMemo(
@@ -72,23 +74,23 @@ function Floor({ warehouse, racks }: { warehouse: Warehouse; racks: Rack[] }) {
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[W / 2, -0.002, -L / 2]}>
         <planeGeometry args={[W + 8, L + 8]} />
-        <meshStandardMaterial color="#0e1725" roughness={0.95} />
+        <meshStandardMaterial color={palette.floor} roughness={0.95} />
       </mesh>
       <Grid
         position={[W / 2, 0, -L / 2]}
         args={[W + 8, L + 8]}
         cellSize={1}
         cellThickness={0.6}
-        cellColor="#18283b"
+        cellColor={palette.gridCell}
         sectionSize={5}
         sectionThickness={1}
-        sectionColor="#23405f"
+        sectionColor={palette.gridSection}
         fadeDistance={Math.max(W, L) * 2.2}
         fadeStrength={1.5}
       />
-      <Line points={outline} color="#35557a" lineWidth={1} dashed dashSize={0.5} gapSize={0.3} />
+      <Line points={outline} color={palette.outline} lineWidth={1} dashed dashSize={0.5} gapSize={0.3} />
       {aisleLines.map((a) => (
-        <Line key={a.id} points={a.points} color={STATUS.unreadable.color} lineWidth={2.2} transparent opacity={0.7} />
+        <Line key={a.id} points={a.points} color={palette.aisle} lineWidth={2.2} transparent opacity={0.7} />
       ))}
     </group>
   );

@@ -8,6 +8,7 @@ import {
   SRGBColorSpace,
 } from "three";
 import { mapBuf, scanBuf } from "../buffers";
+import { usePalette } from "./Racks";
 
 /** Yumuşak kenarlı yuvarlak nokta dokusu (kare noktalar yerine). */
 function useDotTexture() {
@@ -30,6 +31,7 @@ function useDotTexture() {
 /** Birikmiş LiDAR haritası. Yalnız yeni eklenen noktalar GPU'ya yüklenir. */
 export function MapCloud({ visible }: { visible: boolean }) {
   const dot = useDotTexture();
+  const palette = usePalette();
   const geom = useMemo(() => {
     const g = new BufferGeometry();
     const pos = new BufferAttribute(mapBuf.positions, 3).setUsage(DynamicDrawUsage);
@@ -39,7 +41,7 @@ export function MapCloud({ visible }: { visible: boolean }) {
     g.setDrawRange(0, 0);
     return g;
   }, []);
-  const synced = useRef({ epoch: -1, count: 0 });
+  const synced = useRef({ epoch: -1, count: 0, colorEpoch: mapBuf.colorEpoch });
 
   useFrame(() => {
     const s = synced.current;
@@ -47,6 +49,14 @@ export function MapCloud({ visible }: { visible: boolean }) {
       s.epoch = mapBuf.epoch;
       s.count = 0;
       geom.setDrawRange(0, 0);
+    }
+    if (s.colorEpoch !== mapBuf.colorEpoch) {
+      // Tema değişti: yüklenmiş bütün noktaların rengi yeniden gönderilir.
+      s.colorEpoch = mapBuf.colorEpoch;
+      const col = geom.getAttribute("color") as BufferAttribute;
+      col.clearUpdateRanges();
+      col.addUpdateRange(0, s.count * 3);
+      col.needsUpdate = true;
     }
     if (mapBuf.count > s.count) {
       for (const name of ["position", "color"] as const) {
@@ -63,13 +73,13 @@ export function MapCloud({ visible }: { visible: boolean }) {
   return (
     <points geometry={geom} frustumCulled={false} visible={visible}>
       <pointsMaterial
-        size={0.065}
+        size={0.055}
         sizeAttenuation
         vertexColors
         map={dot}
         transparent
         alphaTest={0.25}
-        opacity={0.8}
+        opacity={palette.lidarOpacity}
       />
     </points>
   );
@@ -78,6 +88,7 @@ export function MapCloud({ visible }: { visible: boolean }) {
 /** Son LiDAR taraması: robotun "şu an gördüğü" parlak noktalar. */
 export function ScanBeam({ visible }: { visible: boolean }) {
   const dot = useDotTexture();
+  const palette = usePalette();
   const geom = useMemo(() => {
     const g = new BufferGeometry();
     g.setAttribute("position", new BufferAttribute(scanBuf.positions, 3).setUsage(DynamicDrawUsage));
@@ -101,7 +112,7 @@ export function ScanBeam({ visible }: { visible: boolean }) {
       <pointsMaterial
         size={0.11}
         sizeAttenuation
-        color="#ffd7a8"
+        color={palette.scanBeam}
         map={dot}
         transparent
         alphaTest={0.2}

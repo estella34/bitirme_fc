@@ -1,6 +1,7 @@
-/* Depo Atlası — tasarım belirteçleri
-   Gece vardiyası çelik-lacivert zemin; renkler depo malzemelerinden:
-   mavi dikme, turuncu kiriş, kraft koli, zemin şeridi sarısı. */
+/* DepoGöz — tasarım belirteçleri
+   Renkler depo malzemelerinden: mavi dikme, turuncu kiriş, kraft koli, zemin şeridi sarısı.
+   Karanlık tema gece vardiyası kontrol odası; aydınlık tema gündüz, beton zeminli depo.
+   Tema, <html data-theme="dark|light"> ile seçilir (index.html ilk boyamadan önce ayarlar). */
 :root {
   --bg: #0a111b;
   --panel: #101a28;
@@ -15,11 +16,23 @@
   --beam: #f2791c;
   --kraft: #c39060;
 
-  --ok: #35d49a;
-  --warn: #f5c625;
-  --bad: #ff4757;
-  --empty: #5f7189;
-  --info: #5cc8ff;
+  /* Göz durumları (dolgu/işaret) ve aynı anlamın metin rengi */
+  --st-verified: #35d49a;
+  --st-conflict: #ff4757;
+  --st-unreadable: #f5c625;
+  --st-empty: #5f7189;
+  --st-observed: #5cc8ff;
+  --st-pending: #3a4b61;
+  --ok: var(--st-verified);
+  --warn: var(--st-unreadable);
+  --bad: var(--st-conflict);
+  --ok-text: #35d49a;
+  --warn-text: #f5c625;
+  --bad-text: #ff5c69;
+
+  --sign-bg: #e9eef5;
+  --sign-fg: #0c1522;
+  --tag-bg: rgba(10, 17, 27, 0.92);
 
   --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
   --sans: "IBM Plex Sans", system-ui, sans-serif;
@@ -30,6 +43,37 @@
   --top-h: 60px;
 
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #eef1f5;
+  --panel: #ffffff;
+  --panel-2: #f3f5f8;
+  --line: #dde3ea;
+  --line-2: #c9d2dd;
+  --text: #0f1a28;
+  --muted: #536579;
+  --faint: #7d8fa4;
+
+  --rack: #2457c5;
+  --beam: #e2660b;
+  --kraft: #c08c58;
+
+  --st-verified: #11a06d;
+  --st-conflict: #e2283b;
+  --st-unreadable: #e0a800;
+  --st-empty: #8292a6;
+  --st-observed: #1e88d0;
+  --st-pending: #c5ced9;
+  --ok-text: #0b7f56;
+  --warn-text: #8f6a00;
+  --bad-text: #c41d30;
+
+  --sign-bg: #13243a;
+  --sign-fg: #ffffff;
+  --tag-bg: rgba(255, 255, 255, 0.95);
+
+  color-scheme: light;
 }
 
 * {
@@ -74,13 +118,13 @@ code {
   color: var(--muted);
 }
 .ok {
-  color: var(--ok);
+  color: var(--ok-text);
 }
 .bad {
-  color: var(--bad);
+  color: var(--bad-text);
 }
 .error {
-  color: var(--bad);
+  color: var(--bad-text);
 }
 
 /* --- iskelet ------------------------------------------------------------ */
@@ -115,14 +159,25 @@ code {
   white-space: nowrap;
 }
 .brand svg {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   fill: none;
-  stroke: var(--rack);
-  stroke-width: 3.2;
+  stroke-width: 2.8;
 }
-.brand svg .beam {
+.brand .upright {
+  stroke: var(--rack);
+}
+.brand .beam {
   stroke: var(--beam);
+}
+.brand .eye {
+  stroke: var(--text);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.brand .pupil {
+  fill: var(--beam);
+  stroke: none;
 }
 .brand strong {
   display: block;
@@ -208,6 +263,31 @@ code {
 .conn-closed::before {
   background: var(--bad);
 }
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-btn:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .demo-ctl {
   display: flex;
   gap: 6px;
@@ -279,7 +359,7 @@ code {
 }
 .btn-stop {
   border-color: var(--bad);
-  color: var(--bad);
+  color: var(--bad-text);
   background: transparent;
 }
 .btn-ghost {
@@ -420,8 +500,8 @@ code {
 .rack-sign {
   padding: 2px 8px 1px;
   border-radius: 3px;
-  background: #e9eef5;
-  color: #0c1522;
+  background: var(--sign-bg);
+  color: var(--sign-fg);
   font: 800 17px/1.1 var(--display);
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -435,7 +515,8 @@ code {
   padding: 3px 8px;
   border: 1px solid var(--line-2);
   border-radius: 6px;
-  background: rgba(10, 17, 27, 0.92);
+  background: var(--tag-bg);
+  color: var(--text);
   font: 700 15px/1 var(--display);
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -656,7 +737,7 @@ code {
   border-radius: 99px;
   border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
   background: color-mix(in srgb, var(--c) 16%, transparent);
-  color: var(--c);
+  color: var(--text);
   font-weight: 600;
   font-size: 12.5px;
 }
@@ -692,20 +773,20 @@ code {
   text-overflow: ellipsis;
 }
 .code-ok .mark {
-  color: var(--ok);
+  color: var(--ok-text);
 }
 .code-missing .mark,
 .code-unexpected .mark,
 .code-unexpected code {
-  color: var(--bad);
+  color: var(--bad-text);
 }
 .code-missing code {
-  color: var(--bad);
+  color: var(--bad-text);
   text-decoration: line-through;
 }
 .code-unknown .mark,
 .code-unknown code {
-  color: var(--warn);
+  color: var(--warn-text);
 }
 .code-pending .mark,
 .code-pending code {
@@ -752,7 +833,7 @@ code {
 }
 .reviewed {
   margin: 0;
-  color: var(--ok);
+  color: var(--ok-text);
 }
 .history {
   display: grid;

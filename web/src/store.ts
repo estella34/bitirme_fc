@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { api } from "./api";
-import { appendCells, clearLive, robotLive, setScan, trailBuf } from "./buffers";
+import { appendCells, clearLive, robotLive, setLidarPalette, setScan, trailBuf } from "./buffers";
+import { SCENE, applyTheme, currentTheme, savedTheme, type ThemeName } from "./theme";
 import type {
   Capture,
   DemoStatus,
@@ -35,8 +36,10 @@ interface State {
   /** Bir gözün ayrıntısı yeniden çekilmeli (canlı güncelleme geldi). */
   locationVersion: Record<number, number>;
   error: string | null;
+  theme: ThemeName;
 
   setView: (v: View) => void;
+  toggleTheme: () => void;
   select: (id: number | null) => void;
   /** Gözü seçer ve kamerayı ona çevirir (panelden, listeden yapılan seçimler için). */
   focus: (id: number) => void;
@@ -77,10 +80,17 @@ export const useStore = create<State>((set, get) => ({
   camera: { mode: "perspektif", nonce: 0 },
   locationVersion: {},
   error: null,
+  theme: currentTheme(),
 
   setView: (view) => {
     if (location.hash !== `#/${view}`) location.hash = `#/${view}`;
     set({ view });
+  },
+  toggleTheme: () => {
+    const theme: ThemeName = get().theme === "dark" ? "light" : "dark";
+    applyTheme(theme, true);
+    setLidarPalette(SCENE[theme].lidar);
+    set({ theme });
   },
   select: (selectedId) => set({ selectedId }),
   focus: (id) => set((s) => ({ selectedId: id, camera: { mode: "odak", nonce: s.camera.nonce + 1 } })),
@@ -156,6 +166,16 @@ function viewFromHash(): View {
     : "depo";
 }
 window.addEventListener("hashchange", () => useStore.setState({ view: viewFromHash() }));
+
+// LiDAR renkleri ilk temaya göre; kullanıcı tema seçmediyse sistem tercihini izle.
+setLidarPalette(SCENE[currentTheme()].lidar);
+window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e) => {
+  if (savedTheme()) return;
+  const theme: ThemeName = e.matches ? "light" : "dark";
+  applyTheme(theme, false);
+  setLidarPalette(SCENE[theme].lidar);
+  useStore.setState({ theme });
+});
 
 // --- canlı bağlantı -----------------------------------------------------------
 

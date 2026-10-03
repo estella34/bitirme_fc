@@ -25,16 +25,20 @@ export function Evidence({
       <img src={src} alt={alt} loading="lazy" />
       <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-hidden="true">
         {reads.map((r) => {
-          const color = highlight?.(r.text) ?? "#35d49a";
+          const color = highlight?.(r.text) ?? "var(--st-verified)";
           const pts = r.polygon.map((p) => p.join(",")).join(" ");
           const [lx, ly] = r.polygon.reduce((a, p) => (p[1] < a[1] ? p : a), r.polygon[0]);
           return (
             <g key={r.text + r.polygon[0].join()}>
-              <polygon points={pts} fill={`${color}22`} stroke={color} strokeWidth={stroke} />
+              <polygon
+                points={pts}
+                style={{ fill: color, fillOpacity: 0.14, stroke: color }}
+                strokeWidth={stroke}
+              />
               <text
                 x={lx}
                 y={ly - stroke * 3}
-                fill={color}
+                style={{ fill: color }}
                 fontSize={Math.max(14, width / 48)}
                 fontFamily="IBM Plex Mono, monospace"
                 fontWeight={500}

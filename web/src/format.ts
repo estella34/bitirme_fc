@@ -1,13 +1,16 @@
 import type { Status } from "./types";
 
-/** Durum adları ve renkleri. Renkler styles.css içindeki belirteçlerle aynıdır. */
+/**
+ * Durum adları ve renkleri. Renkler CSS değişkenidir (styles.css), böylece temaya uyar.
+ * 3B sahnedeki karşılıkları theme.ts → SCENE[tema].status içindedir.
+ */
 export const STATUS: Record<Status | "pending", { label: string; color: string }> = {
-  verified: { label: "Doğrulandı", color: "#35d49a" },
-  conflict: { label: "Çelişki", color: "#ff4757" },
-  unreadable: { label: "Okunamadı", color: "#f5c625" },
-  empty: { label: "Boş", color: "#5f7189" },
-  observed: { label: "Stok bilgisi yok", color: "#5cc8ff" },
-  pending: { label: "Taranmadı", color: "#3a4b61" },
+  verified: { label: "Doğrulandı", color: "var(--st-verified)" },
+  conflict: { label: "Çelişki", color: "var(--st-conflict)" },
+  unreadable: { label: "Okunamadı", color: "var(--st-unreadable)" },
+  empty: { label: "Boş", color: "var(--st-empty)" },
+  observed: { label: "Stok bilgisi yok", color: "var(--st-observed)" },
+  pending: { label: "Taranmadı", color: "var(--st-pending)" },
 };
 
 export const STATUS_ORDER: (Status | "pending")[] = [
@@ -29,9 +32,8 @@ export const ROBOT_STATE: Record<string, string> = {
   capturing: "Fotoğraf çekiyor",
 };
 
-export const KRAFT = "#c39060";
+/** Robotun turuncu vurgusu: iki temada da aynı (robot sahnedeki bir nesne, tema değil). */
 export const BEAM = "#f2791c";
-export const RACK_BLUE = "#2f6be4";
 
 const timeFmt = new Intl.DateTimeFormat("tr-TR", {
   hour: "2-digit",

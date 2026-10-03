@@ -13,6 +13,8 @@ export const mapBuf = {
   count: 0,
   /** Harita sıfırlandığında artar; GPU tamponu baştan yüklenir. */
   epoch: 0,
+  /** Renkler (tema) değiştiğinde artar; renk tamponu baştan yüklenir. */
+  colorEpoch: 0,
 };
 
 export const scanBuf = {
@@ -37,17 +39,12 @@ export const trailBuf: { points: [number, number][]; version: number } = {
   version: 0,
 };
 
-// Yüksekliğe göre renk: zemin yakını koyu mavi → tavana doğru buz beyazı.
-const STOPS: [number, string][] = [
-  [0.0, "#1b3a8f"],
-  [0.25, "#2f6be4"],
-  [0.55, "#2cc6e8"],
-  [0.8, "#9fe7f5"],
-  [1.0, "#eaf6ff"],
-];
+// Yüksekliğe göre renk tablosu. Tema değişince setLidarPalette() ile yeniden kurulur.
 const LUT_SIZE = 64;
 const LUT = new Float32Array(LUT_SIZE * 3);
-{
+const MAX_Z = 3.2; // renk ölçeğinin üst sınırı (m)
+
+function buildLut(stops: [number, string][]): void {
   // three.js tepe renklerini doğrusal uzayda bekler: sRGB → doğrusal dönüşümü burada yapılır
   // (three'yi ana pakete çekmemek için elle).
   const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
@@ -55,16 +52,32 @@ const LUT = new Float32Array(LUT_SIZE * 3);
   for (let i = 0; i < LUT_SIZE; i++) {
     const t = i / (LUT_SIZE - 1);
     let k = 0;
-    while (k < STOPS.length - 2 && t > STOPS[k + 1][0]) k++;
-    const [t0, c0] = STOPS[k];
-    const [t1, c1] = STOPS[k + 1];
-    const f = (t - t0) / (t1 - t0);
+    while (k < stops.length - 2 && t > stops[k + 1][0]) k++;
+    const [t0, c0] = stops[k];
+    const [t1, c1] = stops[k + 1];
+    const f = Math.min(1, Math.max(0, (t - t0) / (t1 - t0)));
     const a = rgb(c0);
     const b = rgb(c1);
     LUT.set([0, 1, 2].map((j) => a[j] + (b[j] - a[j]) * f), i * 3);
   }
 }
-const MAX_Z = 3.2;
+
+function lutIndex(z: number): number {
+  return Math.min(LUT_SIZE - 1, Math.max(0, Math.round((z / MAX_Z) * (LUT_SIZE - 1)))) * 3;
+}
+
+/** Tema değişti: renk tablosunu kur ve mevcut bütün noktaları yeniden boya. */
+export function setLidarPalette(stops: [number, string][]): void {
+  buildLut(stops);
+  const { positions, colors } = mapBuf;
+  for (let i = 0; i < mapBuf.count; i++) {
+    const li = lutIndex(positions[i * 3 + 1]);
+    colors[i * 3] = LUT[li];
+    colors[i * 3 + 1] = LUT[li + 1];
+    colors[i * 3 + 2] = LUT[li + 2];
+  }
+  mapBuf.colorEpoch++;
+}
 
 /** Voksel indekslerini [ix,iy,iz,...] dünya→three koordinatına çevirip haritaya ekler. */
 export function appendCells(cells: number[], resolution: number): void {
@@ -78,7 +91,7 @@ export function appendCells(cells: number[], resolution: number): void {
     positions[o] = x;
     positions[o + 1] = z;
     positions[o + 2] = -y;
-    const li = Math.min(LUT_SIZE - 1, Math.max(0, Math.round((z / MAX_Z) * (LUT_SIZE - 1)))) * 3;
+    const li = lutIndex(z);
     colors[o] = LUT[li];
     colors[o + 1] = LUT[li + 1];
     colors[o + 2] = LUT[li + 2];

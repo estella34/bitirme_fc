@@ -1,4 +1,4 @@
-# Dikey kameralı depo envanter robotu — proje brifingi
+# DepoGöz — dikey kameralı depo envanter robotu: proje brifingi
 
 Bu belge, projeye sonradan katılacak bir yapay zekâ veya geliştiricinin bağlamı kaybetmeden yardımcı olabilmesi için yazılmıştır. Buradaki kesinleşmemiş ayrıntılar tahmin gibi sunulmamalı; ilgili bölümdeki deney veya ölçümle doğrulanmalıdır.
 

@@ -1,4 +1,6 @@
-# Dikey kameralı depo envanter robotu
+# DepoGöz
+
+**Dikey kameralı depo envanter robotu.** Adındaki "göz" hem raf gözünü hem de rafa bakan kamerayı anlatır.
 
 Lisans bitirme projesi. Depo raflarının önünde duran küçük bir robot, dikey olarak yükselen kamera platformuyla koli etiketlerini görüntüler. Bu görüntülerden raf gözü bazında envanter kaydı üretir: **tarama kimliği, raf/göz, görünen koli sayısı, okunan kimlik, görüntü kanıtı ve sonuç durumu**.
 
@@ -29,7 +31,7 @@ cd web && npm install && npm run build
 ```
 
 ```bash
-cd backend && .venv/bin/envanter serve --port 8000
+cd backend && .venv/bin/depogoz serve --port 8000
 ```
 
 Sonra http://localhost:8000 adresini açıp **Demo taramayı başlat** düğmesine basın. Ayrıntılar, robot API'si ve Jetson kurulumu için: [docs/YAZILIM.md](docs/YAZILIM.md).
@@ -54,7 +56,7 @@ Sonra http://localhost:8000 adresini açıp **Demo taramayı başlat** düğmesi
 │   └── referans/               # referans görseller
 └── jetson/
     ├── scripts/                # Jetson'da çalışan kurulum / kontrol betikleri
-    ├── envanter.service        # sunucuyu açılışta başlatan systemd birimi
+    ├── depogoz.service         # sunucuyu açılışta başlatan systemd birimi
     └── kayitlar/               # Jetson'dan alınan sağlık kontrolü raporları
 ```
 

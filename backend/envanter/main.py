@@ -1,4 +1,4 @@
-"""Uygulama girişi: `uvicorn envanter.main:app` veya `envanter serve`."""
+"""Uygulama girişi: `uvicorn envanter.main:app` veya `depogoz serve`."""
 
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="Depo Envanter API",
+        title="DepoGöz API",
         version=__version__,
         description="Dikey kameralı depo envanter robotu — tarama, kod okuma, mutabakat ve dijital ikiz.",
         lifespan=lifespan,
