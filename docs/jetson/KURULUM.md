@@ -13,13 +13,17 @@
 | Parça | Not |
 |---|---|
 | Jetson Orin Nano Developer Kit | Developer Kit 8 GB modülle gelir; kurulumdan sonra `free -h` ile doğrulayın |
-| Güç adaptörü | Kutudan çıkan 19 V DC adaptör. Kart DC jaktan beslenir |
+| Güç adaptörü | Kutudan çıkan 19 V / 45 W adaptör. Kart **yalnız DC jaktan** beslenir (5,5×2,5 mm, orta uç +, 9–20 V). USB-C portu sadece veri içindir. Adaptörün AC kablosu çıkarılabilir ve Amerikan tipidir (Type B); Türkiye için adaptör tarafına uyan topraklı bir kablo kullanın (aşağıdaki not) |
 | microSD kart | En az 64 GB, UHS-1 veya daha hızlı |
 | NVMe SSD (isteğe bağlı) | M.2 2280 PCIe. Veri seti ve hız için önerilir |
 | USB bellek | En az 16 GB. Yalnız JetPack 7 yolunda gerekir |
 | Ekran + klavye + fare | Kartta **DisplayPort** çıkışı var. DP→HDMI adaptörlerin bazıları çalışmaz, aktif adaptör daha güvenli |
 | Mac | İmajı yazmak için [balenaEtcher](https://etcher.balena.io/) |
 | Ağ | Ethernet kablosu en kolayı. Kartta Wi-Fi modülü de var |
+
+**Fiş notu:** Adaptörün etiketinde `Input: 100-240V ~ 50/60Hz` yazıyorsa yalnız fiş şeklini değiştirmek yeterli, voltaj dönüştürücüsü gerekmez. En temiz yol, Amerikan kabloyu adaptörden çıkarıp yerine adaptördeki girişe uyan Türkiye fişli bir kablo takmaktır. Yonca tipi 3 delikli girişe C5 kablo, 8 şeklindeki 2 delikli girişe C7 kablo uyar. Bu kablolar laptop şarj aletlerinde yaygındır. Fişi kesip yeniden bağlamayın, Amerikan fişi de prize zorlayarak takmayın.
+
+**USB-C ile besleme (resmî değil):** USB-C PD → 5,5×2,5 mm DC "trigger" kablosu, 15 V veya 20 V'a sabitlenmiş hâlde, en az 45 W (tercihen 65 W) PD şarj aletiyle kullanılabilir. Kutudaki adaptör çalışıyorsa buna gerek yok.
 
 Kurulumdan önce `docs/donanim/DONANIM_ENVANTERI.md` dosyasına kartın, SSD'nin ve adaptörün etiket fotoğraflarını ve model kodlarını işleyin.
 
