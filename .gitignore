@@ -29,6 +29,7 @@ venv/
 # Büyük dosyalar git'e girmez; nerede tutulduğu docs/ altında belgelenir.
 data/
 datasets/
+var/
 runs/
 captures/
 *.mp4
@@ -47,6 +48,11 @@ captures/
 *.sqlite
 *.sqlite3
 *.log
+
+# --- Arayüz (Node) ---
+node_modules/
+web/dist/
+*.tsbuildinfo
 
 # --- Arduino / PlatformIO ---
 .pio/
