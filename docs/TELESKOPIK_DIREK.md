@@ -12,14 +12,14 @@ Tek motor yalnız 1. boruyu kaldırır. Diğer borular, boyu hiç değişmeyen "
 | A halatı | Taban borusu yakası | 1. boru yakası | 2. borunun ayağı | 2. boru `2x` |
 | B halatı | 1. boru yakası | 2. boru yakası | 3. borunun ayağı | 3. boru `3x` |
 
-Halatlar borular arasındaki boşlukta, kayar pabuçların olmadığı yüzlerde iner. Makaralar yakaların üstünde, borunun dışındadır.
+Borular birbirine hiç değmez: aralarında her yandan ~5 mm boşluk vardır ve temas yalnız plastik **kayar pabuçlar** üzerindendir. Her geçişte iki pabuç seti bulunur: **üst set** dış borunun ağzına (yakaya) sabittir, **alt set** iç borunun dibine (ayağa) sabittir. İkisi arasındaki mesafe (örtüşme) ne kadar uzunsa boru o kadar az sallanır; kural olarak örtüşme ≥ iç boru genişliğinin 3–4 katı. Pabuçlar dört yüzün ortasında dar şeritlerdir (~15 mm); halatlar borular arasındaki boşluğun köşelerinden geçer. Makaralar yakaların üstünde, borunun dışındadır.
 
 ## Parça listesi
 
 | Parça | Öneri | Adet | Not |
 |---|---|---|---|
 | Kare alüminyum boru | 60×60×2, 45×45×2, 30×30×2, 15×15×1,5 mm; her biri 800 mm | 4 | Kural: iç içe borular arasında her yandan ~5 mm boşluk kalsın (pabuç + halat payı) |
-| Kayar pabuç | 5 mm POM/Delrin şerit (ilk deneme PETG baskı) | 12–16 | Dış borunun ağzına içten, iç borunun ayağına dıştan; karşılıklı iki yüzde |
+| Kayar pabuç | 5 mm POM/Delrin, ~15×30 mm parçalar (ilk deneme PETG baskı) | 24 | Her geçişte 4 üst + 4 alt (3 geçiş); dört yüzün ortasında, arkasında ince pul ile boşluk ayarı |
 | Yaka (borunun tepesi) | PETG 3B baskı | 4 | Makara mili, halat bağlantı vidası, kamera tutucusu, ağız pabuçları |
 | Ayak (hareketli boruların dibi) | PETG 3B baskı | 3 | Dış pabuçlar, halat bağlama halkası, **dayanma çıkıntısı** (tam açılınca dış borunun yakasına takılır, boru çıkıp düşmez) |
 | Makara | 623/624 rulman veya küçük V makara | 3 | Taban yakası, 1. boru yakası, 2. boru yakası |
