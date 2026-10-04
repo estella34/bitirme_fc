@@ -46,7 +46,7 @@ ROPE_D = 2.0;
 
 // Makara: 623ZZ rulman (3x10x4), M3 cıvata mil
 R_P = 8;                        // oluk yarıçapı (halat merkezine)
-R_FL = 11;
+R_FL = 10;
 PW = 6;                         // makara genişliği
 BRG_D = 10; BRG_W = 4;
 P_CZ = R_FL + 1.5;              // makara merkezi, halka üstünden
@@ -171,11 +171,13 @@ module pulley_ears(d) {
 // Rulmanlı makara (düz basılır, 623ZZ preslenir).
 module pulley() {
     difference() {
+        // Oluk profili (r, z): 45° flanşlar, 1,5 mm halat için yuvarlatılmış dip. Kendini kesmez.
         rotate_extrude($fn = 72) polygon([
-            [BRG_D/2 - 0.5, 0], [R_FL, 0], [R_FL, 0.8], [R_P + 0.4, 0.8 + (R_FL - R_P - 0.4)],
-            [R_P - 0.6, PW/2], [R_P + 0.4, PW - 0.8 - (R_FL - R_P - 0.4)], [R_FL, PW - 0.8], [R_FL, PW], [BRG_D/2 - 0.5, PW]
+            [BRG_D/2 - 0.5, 0], [R_FL, 0], [R_FL, 0.6], [R_P + 0.2, 2.4],
+            [R_P - 0.7, PW/2], [R_P + 0.2, PW - 2.4], [R_FL, PW - 0.6], [R_FL, PW], [BRG_D/2 - 0.5, PW]
         ]);
-        translate([0, 0, (PW - BRG_W)/2]) cylinder(d = BRG_D - 0.1, h = BRG_W + 0.01);   // rulman sıkı geçme
+        // rulman yuvası üstten açık; rulman yukarıdan preslenir, alttaki 1 mm kenara oturur
+        translate([0, 0, PW - BRG_W]) cylinder(d = BRG_D - 0.1, h = BRG_W + 1);
         translate([0, 0, -1]) cylinder(d = BRG_D - 1.5, h = PW + 2);
     }
 }
