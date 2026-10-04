@@ -22,6 +22,18 @@ Borular alüminyum kare profil; bu klasör yalnız 3B yazıcıda basılacak bağ
 - **Mekanik acil durdurucu** x ≈ 750 mm'de: ayak pabuçları yaka parmaklarına dayanır.
 - Bütün parçalar 0 / 300 / 600 / 750 mm açıklıkta çakışma testinden geçti.
 
+## Baskıya hazır tablalar (en kolayı)
+
+`tablalar/` klasöründe A1 tablasına (256×256 mm) dizilmiş, adetleri ayarlanmış üç dosya var. Her birini Bambu Studio'ya sürükleyip ayarı yapıp basman yeterli:
+
+| Dosya | İçinde | Ayarlar |
+|---|---|---|
+| `tabla1_pabuclar.3mf` | 28 standart + 8 ince + 8 kalın pabuç | 0,2 mm, dolgu %100, **Ütüleme: Üst yüzeyler** |
+| `tabla2_yakalar_makaralar.3mf` | 3 yaka, 3 ayak kılıfı, kapak, 4 makara, motor tamburu | 0,16 mm, 4 duvar, dolgu %25 |
+| `tabla3_taban_tipalar.3mf` | Taban yuvası, 3 iç tıpa | 0,2 mm, 4 duvar, dolgu %20 |
+
+Hiçbirinde destek gerekmez. Bambu Studio "bu dosya Bambu projesi değil" derse **Evet / Yalnız geometriyi yükle** de; parçalar yerinde gelir.
+
 ## Baskı listesi
 
 | Dosya | Adet | Not |

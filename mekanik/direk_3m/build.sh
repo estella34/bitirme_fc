@@ -18,4 +18,6 @@ done
 # yakın plan: en üstteki iki yaka
 openscad --backend=manifold --render -D 'part="assembly"' -D "x=0" --imgsize=900,900 --colorscheme=Tomorrow \
     --camera=0,0,1000,60,0,35,420 -o "onizleme/yakin_plan.png" direk_3m.scad 2>/dev/null
+# baskıya hazır tablalar (A1, 256x256)
+python3 plakalar.py || ../../backend/.venv/bin/python plakalar.py
 echo "Bitti."
