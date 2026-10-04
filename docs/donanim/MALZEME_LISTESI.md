@@ -1,5 +1,7 @@
 # Teleskopik direk — malzeme listesi (1:2 prototip)
 
+> **Güncel (2026-10-04):** Hedef 3 m'ye çıkarıldı. Boru ölçüleri ve boyları, basılacak parçalar ve hırdavat listesi için geçerli kaynak: [`mekanik/direk_3m/README.md`](../../mekanik/direk_3m/README.md). Bu sayfadaki elektronik/güç/kamera listesi geçerliliğini koruyor.
+
 Tasarım: [`../TELESKOPIK_DIREK.md`](../TELESKOPIK_DIREK.md). Kapalı ~1 m, açık ~2,9 m; 4 boru, 3 halat, 1 motor, 4 kamera. Fiyat yazılmadı; parça seçiminden önce stok ve fiyat kontrol edilmeli. Model adları **örnektir**; eşdeğeri olur.
 
 ## 1. Mekanik
