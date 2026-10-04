@@ -1,5 +1,7 @@
 # Dikey kamera mekanizması — ilk yapılabilir taslak
 
+> **Güncel yön (2026-10-04):** Kullanıcının tercihi dört kameralı, eş zamanlı açılan teleskopik direk (kapalı ~2 m → açık 5–6 m, kameralar arası hep eşit). Kurulum rehberi ve parça listesi: [`TELESKOPIK_DIREK.md`](TELESKOPIK_DIREK.md). Aşağıdaki tek arabalı vida-kızak taslağı daha basit bir yedek seçenek olarak duruyor.
+
 Bu taslak, **Jetson ve araç motorları tabanda sabitken** dört kamerayı taşıyan tek bir arabanın raf boyunca yükselmesi içindir. Kesin parça siparişi değildir: raf yüksekliği, istenen hareket mesafesi, kameraların dizilişi ve hareketli kütle ölçülünce boyutlandırılacak. İlk hedef, araç hareketsizken bir rafı dur–çek–ilerle düzeniyle taramak.
 
 ## Önerilen ilk mimari
