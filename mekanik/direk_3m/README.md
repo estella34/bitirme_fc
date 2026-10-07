@@ -64,7 +64,7 @@ Hiçbirinde destek gerekmez. Bambu Studio "bu dosya Bambu projesi değil" derse 
 | 623ZZ rulman (3×10×4) | 4 | Makaralar |
 | M4×70 cıvata + somun | 1 | Taban yuvası ↔ 60'lık boru |
 | M5 cıvata + somun | 4 | Taban yuvası ↔ robot plakası |
-| Dyneema 1–1,5 mm | ~8 m | Motor halatı ~3 m, A ve B ~2,5'er m |
+| Dyneema 1,2 mm (1,0–1,5 arası) | ~8 m (≥16 m alın) | Motor halatı ~3 m, A ve B ~2,5'er m |
 | 1,75 mm filament | — | Pabuç pimleri (her pabuç için 2 × ~4 mm) |
 
 ## Yön kuralı
@@ -113,7 +113,7 @@ Borunun kayan bölgesine (bunlar dışında hiçbir yere) delik açılmaz.
 4. **Boru 1:** Yaka 1 → boru 2'yi alttan sok → kılıf 1 + tıpa 1 → **motor halatı** kılıf 1'in sağ arka kulağına.
 5. **Boru 0:** Yaka 0 → boru 1'i alttan sok → boru 0'ı taban yuvasına otur, M4 cıvatayla sabitle.
 6. **Makaralar:** Yakalardaki ve tabandaki kulaklara M3×16 ile takılır.
-7. **Halatlar:** Bütün borular kapalı ve yerlerinde dururken bağlanır: boru 1 tabanda, boru 2 tıpa 1'in, boru 3 tıpa 2'nin üstünde. Gergin olsunlar ama çekmesinler.
+7. **Halatlar:** Bütün borular kapalı ve yerlerinde dururken bağlanır: boru 1 tabanda, boru 2 tıpa 1'in, boru 3 tıpa 2'nin üstünde. Gergin olsunlar ama çekmesinler. Halatı deliklerden tek kat geçirip arkada **çift sekiz düğümü** atın; tambura bağlamadan önce 3–4 tur sarın.
    - **B:** Kılıf 3 → yaka 2 makarası → yaka 1'in sol ön bağlama sütunu.
    - **A:** Kılıf 2 → yaka 1 makarası → yaka 0'ın sol arka bağlama sütunu.
    - **Motor halatı:** Kılıf 1 → yaka 0 makarası → boru 0'ın dışından aşağı → taban makarası → motor tamburu.

@@ -1,6 +1,6 @@
 # Teleskopik direk — malzeme listesi (1:2 prototip)
 
-> **Güncel (2026-10-04):** Hedef 3 m'ye çıkarıldı. Boru ölçüleri ve boyları, basılacak parçalar ve hırdavat listesi için geçerli kaynak: [`mekanik/direk_3m/README.md`](../../mekanik/direk_3m/README.md). Bu sayfadaki elektronik/güç/kamera listesi geçerliliğini koruyor.
+> **Güncel (2026-10-04):** Hedef 3 m'ye çıkarıldı. Boru ölçüleri ve boyları, basılacak parçalar ve hırdavat listesi için geçerli kaynak: [`mekanik/direk_3m/README.md`](../../mekanik/direk_3m/README.md). Bu sayfadaki elektronik/güç/kamera listesi geçerliliğini koruyor. Satın alınacakların derli toplu hâli (motor ve ip modelleriyle): [`ALISVERIS_LISTESI.md`](ALISVERIS_LISTESI.md).
 
 Tasarım: [`../TELESKOPIK_DIREK.md`](../TELESKOPIK_DIREK.md). Kapalı ~1 m, açık ~2,9 m; 4 boru, 3 halat, 1 motor, 4 kamera. Fiyat yazılmadı; parça seçiminden önce stok ve fiyat kontrol edilmeli. Model adları **örnektir**; eşdeğeri olur.
 
@@ -15,7 +15,7 @@ Tasarım: [`../TELESKOPIK_DIREK.md`](../TELESKOPIK_DIREK.md). Kapalı ~1 m, aç�
 | M5 | Kayar pabuç malzemesi | 5 mm POM (Delrin) levha, ~100×200 mm | 1 | İlk deneme için PETG baskı da olur |
 | M6 | 3B baskı filament | PETG, 1 kg | 1 | Yakalar, ayaklar, vinç makarası, kamera tutucuları, kablo klipsleri |
 | M7 | Rulman (makara için) | 623ZZ veya 624ZZ | 6 | 3 makara × 2 (biri yedek); ince pullarla |
-| M8 | Halat | 1–1,5 mm Dyneema (örgü misina, ≥45 kg) | 10 m | Çelik halat da olur; o zaman sıkma yüksüğü gerekir |
+| M8 | Halat | 1,2 mm Dyneema (1,0–1,5 mm arası) | ≥16 m | Örn. 1,2 mm Dyneema Optimist yelken ipi. Naylon misina ve çelik halat uygun değil |
 | M9 | Germe vidası / ayar civatası | M4, küçük | 3 | Halat gerginliği ayarı |
 | M10 | Taban montaj plakası | 4–5 mm alüminyum levha, ~200×200 mm | 1 | Direği robot şasesine bağlar; şasiye göre ölçülecek |
 | M11 | Köşebent / destek | Alüminyum L köşebent | 4 | Taban borusunu plakaya dik bağlamak için |
@@ -29,9 +29,9 @@ Tasarım: [`../TELESKOPIK_DIREK.md`](../TELESKOPIK_DIREK.md). Kapalı ~1 m, aç�
 
 | # | Parça | Özellik | Adet | Not |
 |---|---|---|---|---|
-| E1 | Redüktörlü motor | 12 V, **sonsuz vidalı**, enkoderli, 30–60 dev/dk (ör. JGY-370 sınıfı) | 1 | Sonsuz vida kendini kilitler: elektrik kesilince direk düşmez. Tork ≥ 10 kg·cm |
-| E2 | Vinç makarası | Ø20 mm, motor miline (D kesitli mil) | 1 | PETG baskı, kenarlıklı |
-| E3 | Motor sürücü | DRV8871 sınıfı (≥2 A) | 1 | L298N da çalışır ama verimsiz/ısınır |
+| E1 | Redüktörlü motor | **5840-31ZY enkoderli**, 12 V, 40 dev/dk, 8 mm D mil | 1 | Sonsuz vida kendini kilitler: elektrik kesilince direk düşmez. ~32 kg·cm anma (ihtiyaç ≥6) |
+| E2 | Vinç makarası | Ø20 mm, motor miline (D kesitli mil) | 1 | Baskı parçası (`drum`); 8 mm mile göre güncellenecek |
+| E3 | Motor sürücü | BTS7960B (43 A) | 1 | Motor sıkışınca ~6,5 A çeker; DRV8871 yetmez. Akım çıkışıyla takılma algılanır |
 | E4 | Kontrol kartı | Arduino Nano veya Uno | 1 | Araç Arduino'sundan **ayrı** olması önerilir; Jetson'a USB ile bağlanır |
 | E5 | Limit anahtarı | Mikro switch (makaralı) | 3 | Alt, üst + 1 yedek |
 | E6 | Mesafe sensörü (isteğe bağlı) | VL53L1X ToF | 1 | En üst yakada aşağı bakar; gerçek yüksekliği doğrular |
