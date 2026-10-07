@@ -19,6 +19,15 @@ class Settings(BaseSettings):
     thumbnail_px: int = 480
     # Barkod çözücü tam görüntüde bir şey bulamazsa klasik ön işlemeyle (B1) yeniden dener.
     decode_fallback: bool = True
+    # Kamera (Jetson CSI, Arducam CamArray + 4×IMX519). None: /dev/video0 ve i2ctransfer
+    # varsa otomatik açılır; Mac'te kendiliğinden kapalıdır.
+    camera_enabled: bool | None = None
+    camera_i2c_bus: int = 10
+    camera_width: int = 3840
+    camera_height: int = 2160
+    camera_fps: int = 17
+    # Bu kadar saniye kimse izlemez/çekmezse kamera bırakılır.
+    camera_idle_s: float = 20.0
     # Arayüzün geliştirme sunucusu (Vite) için izin verilen köken.
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 

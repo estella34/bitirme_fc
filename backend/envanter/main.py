@@ -18,6 +18,7 @@ from .api import router as api_router
 from .config import get_settings
 from .db import SessionLocal, init_db
 from .models import Warehouse
+from .services.camera import set_camera
 from .services.demo import ensure_demo_world, runner
 from .services.live import broker
 from .services.mapping import get_map_store
@@ -35,6 +36,7 @@ async def lifespan(app: FastAPI):
     with contextlib.suppress(Exception):
         await runner.stop()
     get_map_store().flush()
+    set_camera(None)  # kamera iş parçacığını kapat, cihazı bırak
 
 
 def create_app() -> FastAPI:
