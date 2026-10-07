@@ -1,7 +1,9 @@
 import { Suspense, lazy, useEffect } from "react";
 import { Overlay } from "./components/Overlay";
+import { SceneBoundary } from "./components/SceneBoundary";
 import { SidePanel } from "./components/SidePanel";
 import { TopBar } from "./components/TopBar";
+import { CameraPage } from "./pages/CameraPage";
 import { DecodePage } from "./pages/DecodePage";
 import { ReviewPage } from "./pages/ReviewPage";
 import { ScansPage } from "./pages/ScansPage";
@@ -32,9 +34,11 @@ export function App() {
         <div className="twin">
           <div className="stage">
             {hasTwin ? (
-              <Suspense fallback={<p className="stage-msg">3B sahne yükleniyor…</p>}>
-                <Scene />
-              </Suspense>
+              <SceneBoundary>
+                <Suspense fallback={<p className="stage-msg">3B sahne yükleniyor…</p>}>
+                  <Scene />
+                </Suspense>
+              </SceneBoundary>
             ) : (
               <p className="stage-msg">Depo verisi bekleniyor…</p>
             )}
@@ -43,6 +47,7 @@ export function App() {
           <SidePanel />
         </div>
       )}
+      {view === "kameralar" && <CameraPage />}
       {view === "inceleme" && <ReviewPage />}
       {view === "taramalar" && <ScansPage />}
       {view === "okuma" && <DecodePage />}

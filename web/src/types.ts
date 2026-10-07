@@ -148,3 +148,35 @@ export interface DecodeResult {
   methods_tried: string[];
   codes: CodeRead[];
 }
+
+export interface CameraStatus {
+  available: boolean;
+  running: boolean;
+  error?: string | null;
+  focus: number;
+  focus_max: number;
+  fps?: number;
+  width?: number | null;
+  height?: number | null;
+  views: number;
+}
+
+export interface CameraView {
+  camera: number;
+  width: number;
+  height: number;
+  sharpness: number;
+  elapsed_ms: number;
+  codes: CodeRead[];
+  location_code: string | null;
+  location: LocationState | null;
+  capture_id: number | null;
+}
+
+export interface CameraRead {
+  scan_id: string | null;
+  width: number;
+  height: number;
+  views: CameraView[];
+  total_codes: number;
+}

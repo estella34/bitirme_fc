@@ -1,4 +1,6 @@
 import type {
+  CameraRead,
+  CameraStatus,
   DecodeResult,
   DemoStatus,
   LocationDetail,
@@ -58,5 +60,11 @@ export const api = {
     fd.append("image", file);
     return request<DecodeResult>("/api/decode", { method: "POST", body: fd });
   },
+  camera: () => request<CameraStatus>("/api/camera"),
+  cameraFocus: (position: number) => request<CameraStatus>("/api/camera/focus", json({ position })),
+  cameraAutofocus: (view: number) =>
+    request<{ position: number; sharpness: number; elapsed_ms: number }>("/api/camera/autofocus", json({ view })),
+  cameraRead: (body: { warehouse_id?: number; location_code?: string }) =>
+    request<CameraRead>("/api/camera/read", json(body)),
   exportUrl: (scanId: string) => `/api/scans/${encodeURIComponent(scanId)}/export.csv`,
 };

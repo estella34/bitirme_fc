@@ -14,7 +14,7 @@ import type {
   Warehouse,
 } from "./types";
 
-export type View = "depo" | "inceleme" | "taramalar" | "okuma";
+export type View = "depo" | "kameralar" | "inceleme" | "taramalar" | "okuma";
 export type CameraMode = "perspektif" | "ust" | "takip" | "odak";
 
 interface State {
@@ -161,7 +161,7 @@ function indexLocations(twin: Twin): Record<number, LocationState> {
 
 function viewFromHash(): View {
   const v = location.hash.replace("#/", "");
-  return (["depo", "inceleme", "taramalar", "okuma"] as View[]).includes(v as View)
+  return (["depo", "kameralar", "inceleme", "taramalar", "okuma"] as View[]).includes(v as View)
     ? (v as View)
     : "depo";
 }
