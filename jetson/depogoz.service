@@ -2,7 +2,7 @@
 # Kurulum:
 #   sudo cp jetson/depogoz.service /etc/systemd/system/
 #   sudo systemctl daemon-reload && sudo systemctl enable --now depogoz
-# Kullanıcı adı ve yollar KURULUM.md'deki varsayımlara göre (envanter, ~/bitirme, /data).
+# Kullanıcı adı ve yollar: depogoz_fc, ~/bitirme. Veri ~/depogoz-veri altında; NVMe takılınca /data'ya taşınır.
 
 [Unit]
 Description=DepoGöz sunucusu (API + arayüz)
@@ -10,10 +10,10 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=envanter
-WorkingDirectory=/home/envanter/bitirme/backend
-Environment=ENVANTER_DATA_DIR=/data/envanter
-ExecStart=/home/envanter/bitirme/backend/.venv/bin/depogoz serve --host 0.0.0.0 --port 8000
+User=depogoz_fc
+WorkingDirectory=/home/depogoz_fc/bitirme/backend
+Environment=ENVANTER_DATA_DIR=/home/depogoz_fc/depogoz-veri
+ExecStart=/home/depogoz_fc/bitirme/backend/.venv/bin/depogoz serve --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=3
 

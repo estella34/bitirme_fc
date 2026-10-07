@@ -2,7 +2,7 @@
 # Jetson ilk açılış sonrası temel kurulum.
 #
 # Ne yapar:
-#   1. Sistemi günceller (apt update + upgrade)
+#   1. Arducam sürücüsü kuruluysa nvidia-l4t-* paketlerini sabitler, sonra sistemi günceller
 #   2. Geliştirme için temel paketleri kurar (git, python3-venv, v4l-utils ...)
 #   3. JetPack bileşenleri (CUDA, TensorRT, cuDNN ...) eksikse nvidia-jetpack kurar
 #   4. SSH sunucusunu açar
@@ -32,6 +32,17 @@ if [[ ! -e /etc/nv_tegra_release ]]; then
 fi
 
 log() { printf '\n\033[1;32m==> %s\033[0m\n' "$*"; }
+
+# Arducam kamera sürücüsü NVIDIA çekirdeğinin yerine kendi çekirdeğini koyuyor. nvidia-l4t-*
+# paketleri yükseltilirse çekirdek, modüller ve kullanıcı alanı sürücüleri uyumsuz kalabilir;
+# bu yüzden hepsi sabitlenir. L4T yükseltmesi bilinçli yapılmalı (sabiti kaldır, yükselt,
+# Arducam sürücüsünü yeni sürüme göre yeniden kur).
+if dpkg-query -W -f='${Status}' arducam-nvidia-l4t-kernel 2>/dev/null | grep -q "install ok installed"; then
+    log "Arducam sürücüsü kurulu: nvidia-l4t-* paketleri yükseltmeye karşı sabitleniyor"
+    # shellcheck disable=SC2046
+    sudo apt-mark hold arducam-nvidia-l4t-kernel \
+        $(dpkg-query -W -f='${db:Status-Abbrev} ${Package}\n' 'nvidia-l4t-*' | awk '/^ii/ {print $2}')
+fi
 
 log "Paket listesi güncelleniyor ve sistem yükseltiliyor"
 sudo apt-get update
