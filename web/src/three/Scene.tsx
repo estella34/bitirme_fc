@@ -11,6 +11,23 @@ import { MapCloud, ScanBeam } from "./MapCloud";
 import { Racks, usePalette } from "./Racks";
 import { Robot, Trail } from "./Robot";
 
+/**
+ * Ekran kartı yoksa (ör. Jetson'daki snap Chromium'u SwiftShader ile işlemcide çizer) sahne
+ * daha düşük çözünürlükte ve kenar yumuşatmasız çizilir; yoksa tarayıcı takılır.
+ */
+const SOFTWARE_GL = (() => {
+  try {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return false;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const name = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return /swiftshader|llvmpipe|softpipe|software/i.test(name);
+  } catch {
+    return false;
+  }
+})();
+
 export function Scene() {
   const twin = useStore((s) => s.twin);
   const layers = useStore((s) => s.layers);
@@ -22,8 +39,8 @@ export function Scene() {
 
   return (
     <Canvas
-      dpr={[1, 2]}
-      gl={{ antialias: true }}
+      dpr={SOFTWARE_GL ? 0.6 : [1, 2]}
+      gl={{ antialias: !SOFTWARE_GL, powerPreference: "high-performance" }}
       camera={{ fov: 40, near: 0.1, far: span * 8, position: presetFor("perspektif", warehouse)[0] }}
       onCreated={({ camera }) => camera.lookAt(...presetFor("perspektif", warehouse)[1])}
       onPointerMissed={() => select(null)}
