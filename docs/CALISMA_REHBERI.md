@@ -150,6 +150,15 @@ Test sayfası arayüzden de alınabilir: `http://<ip>:8000/api/test-sheet` (PDF)
 4. **`pkill -f "..."` komutunu SSH ile verirken dikkat.** Desen, komutun kendi satırına da uyuyor ve SSH oturumunu öldürüyor. `pkill -x <ad>` kullanın.
 5. **SSH'tan kapatma ve servis yeniden başlatma şifre ister.** `ssh -t` ile verin (bkz. 3. bölüm).
 6. **Firmware** 36.4.7. Açılış bölümü küçük olduğu için otomatik firmware güncellemesi yer bulamıyor; gerekirse NVIDIA'nın elle yöntemiyle yapılıyor (Jetson'da `/opt/ota_package/t23x/TEGRA_BL_3767_super.Cap`).
+7. **Güç butonu** (ONPOW, radyatörün altındaki buton başlığına bağlı) açar ama kendi başına kapatmaz:
+   - GNOME güç tuşunu üstüne alıyor (`systemd-inhibit --list` → `gsd-media-keys ... handle-power-key`). Bu yüzden `logind.conf`'taki `HandlePowerKey` işlemiyor; GNOME'un ayarında da "kapat" seçeneği yok (`gsettings ... power-button-action` yalnız `nothing/suspend/hibernate/interactive` alır).
+   - Çözüm: `depogoz-guc-tusu` servisi tuşu doğrudan okur, kısa basışta `systemctl poweroff` çalıştırır. Önce kapatmadan dene (Ctrl+C ile çık), sonra kur:
+     ```bash
+     cd ~/bitirme && sudo python3 jetson/scripts/guc_tusu.py --deneme
+     sudo cp jetson/depogoz-guc-tusu.service /etc/systemd/system/
+     sudo systemctl daemon-reload && sudo systemctl enable --now depogoz-guc-tusu
+     ```
+   - Basışın Jetson'a ulaşıp ulaşmadığı: `journalctl -b -u systemd-logind | grep "Power key"`.
 
 ## 8. Donanım kararları ve sıradaki işler
 

@@ -1,0 +1,16 @@
+# Güç butonuna kısa basınca Jetson'ı sormadan kapatan systemd birimi (jetson/scripts/guc_tusu.py).
+# Kurulum:
+#   sudo cp jetson/depogoz-guc-tusu.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now depogoz-guc-tusu
+# Kapatmadan denemek için önce: sudo python3 jetson/scripts/guc_tusu.py --deneme
+
+[Unit]
+Description=DepoGöz güç butonu (kısa basış → kapat)
+
+[Service]
+ExecStart=/usr/bin/python3 /home/depogoz_fc/bitirme/jetson/scripts/guc_tusu.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
