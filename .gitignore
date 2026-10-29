@@ -66,3 +66,9 @@ web/dist/
 *.iso
 *.img
 *.zip
+
+# --- Dilimleyici / dışa aktarma çıktıları (kaynakları mekanik/ altında) ---
+result.json
+*.gcode.3mf
+DepoGoz_*_STL/
+DepoGoz_*_STL.zip

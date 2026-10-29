@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # varsa otomatik açılır; Mac'te kendiliğinden kapalıdır.
     camera_enabled: bool | None = None
     camera_i2c_bus: int = 10
+    camera_channel: int = 0  # 0: 4 kamera birleşik (2x2), 1..4: tek kamera kanalı
     camera_width: int = 3840
     camera_height: int = 2160
     camera_fps: int = 17

@@ -148,10 +148,12 @@ class CameraService:
         source_factory: Callable[[], FrameSource],
         i2c: I2CBus | None,
         idle_s: float = 20.0,
+        channel: int = 0,
     ) -> None:
         self._factory = source_factory
         self._i2c = i2c
         self.idle_s = idle_s
+        self.channel = channel
         self._cond = threading.Condition()
         self._thread: threading.Thread | None = None
         self._frame: np.ndarray | None = None
@@ -201,7 +203,7 @@ class CameraService:
     def _loop(self) -> None:
         src: FrameSource | None = None
         try:
-            self._set_quad_mode()
+            self._set_channel_mode(self.channel)
             src = self._factory()
             src.open()
             first = True
@@ -270,15 +272,18 @@ class CameraService:
         hit = self._jpeg_cache.get(key)
         if hit and hit[0] == seq:
             return hit[1], seq
-        data = encode_jpeg(view_of(frame, view), max_w, quality)
+        view_img = frame if self.channel != 0 else view_of(frame, view)
+        data = encode_jpeg(view_img, max_w, quality)
         self._jpeg_cache[key] = (seq, data)
         return data, seq
 
     # --- odak ------------------------------------------------------------
 
-    def _set_quad_mode(self) -> None:
+    def _set_channel_mode(self, channel: int = 0) -> None:
         if self._i2c is not None:
-            self._i2c.write(HAT_ADDR, 0x24, 0x00)
+            # 0: Dörtlü mod (0x00), 1: Kanal 1 (0x02), 2: Kanal 2 (0x12), 3: Kanal 3 (0x22), 4: Kanal 4 (0x32)
+            mode_bytes = {0: 0x00, 1: 0x02, 2: 0x12, 3: 0x22, 4: 0x32}
+            self._i2c.write(HAT_ADDR, 0x24, mode_bytes.get(channel, 0x00))
 
     def _write_focus(self, pos: int) -> None:
         if self._i2c is None:
@@ -357,6 +362,7 @@ def get_camera() -> CameraService | None:
                 lambda: GstSource(s.camera_width, s.camera_height, s.camera_fps),
                 I2CBus(s.camera_i2c_bus),
                 idle_s=s.camera_idle_s,
+                channel=s.camera_channel,
             )
         return _camera
 

@@ -22,7 +22,7 @@ router = APIRouter(tags=["araçlar"])
 
 
 @router.post("/decode")
-async def decode(image: UploadFile = File(...)) -> dict:
+async def decode(image: UploadFile = File(...), robust: bool = True) -> dict:
     """Bir görüntüdeki QR/barkodları çözer; hiçbir şey kaydetmez (okuma testi)."""
     data = await image.read()
     try:
@@ -30,7 +30,7 @@ async def decode(image: UploadFile = File(...)) -> dict:
         img.load()
     except (UnidentifiedImageError, OSError) as e:
         raise HTTPException(400, "Görüntü okunamadı") from e
-    out = await run_in_threadpool(decode_image, img)
+    out = await run_in_threadpool(decode_image, img, robust_fallback=robust)
     return {
         "width": out.width,
         "height": out.height,
@@ -42,6 +42,30 @@ async def decode(image: UploadFile = File(...)) -> dict:
             for c in out.codes
         ],
     }
+
+
+@router.get("/test-sheet")
+async def get_test_sheet(format: str = "pdf"):
+    """Yazdırılabilir A4 QR test sayfasını döndürür (PDF veya PNG)."""
+    from fastapi.responses import Response
+    from ..services.test_sheet import generate_test_sheet
+
+    canvas = await run_in_threadpool(generate_test_sheet)
+    buf = io.BytesIO()
+    if format.lower() == "png":
+        canvas.save(buf, format="PNG")
+        media_type = "image/png"
+        filename = "depogoz_test_sayfasi.png"
+    else:
+        canvas.save(buf, format="PDF", resolution=150.0)
+        media_type = "application/pdf"
+        filename = "depogoz_test_sayfasi.pdf"
+    buf.seek(0)
+    return Response(
+        content=buf.getvalue(),
+        media_type=media_type,
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
 
 
 @router.post("/stock/import")

@@ -72,13 +72,42 @@ def sharpness_score(gray: Image.Image) -> float:
 
 
 def preprocess_b1(gray: Image.Image) -> tuple[Image.Image, float]:
-    """Klasik ön işleme. Dönen ölçek, koordinatları orijinale geri çevirmek içindir."""
+    """Klasik ön işleme (B1): Kontrast, keskinleştirme ve küçük kodlar için büyütme."""
     img = ImageOps.autocontrast(gray, cutoff=1)
     img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=160, threshold=3))
     scale = 1.0
     if min(img.size) < _UPSCALE_BELOW_PX:
         scale = 2.0
         img = img.resize((img.width * 2, img.height * 2), Image.Resampling.LANCZOS)
+    return img, scale
+
+
+def preprocess_b2_glare(gray: Image.Image) -> tuple[Image.Image, float]:
+    """Parlama ve şeffaf bant ön işleme (B2): Yerel arka plan çıkarımı ile yansımayı sıfırlar."""
+    blur_rad = max(9, int(min(gray.size) * 0.05))
+    bg = gray.filter(ImageFilter.BoxBlur(blur_rad))
+    arr_gray = np.asarray(gray, dtype=np.float32)
+    arr_bg = np.asarray(bg, dtype=np.float32)
+    # Yerel kontrast normalizasyonu: parlak bant şeritlerini ve gölgeleri dengeler
+    norm = np.clip(128.0 + (arr_gray - arr_bg) * 2.8, 0, 255).astype(np.uint8)
+    img = Image.fromarray(norm)
+    img = ImageOps.autocontrast(img, cutoff=2)
+    scale = 1.0
+    if min(img.size) < _UPSCALE_BELOW_PX:
+        scale = 1.5
+        img = img.resize((int(img.width * 1.5), int(img.height * 1.5)), Image.Resampling.LANCZOS)
+    return img, scale
+
+
+def preprocess_b3_repair(gray: Image.Image) -> tuple[Image.Image, float]:
+    """Çizik ve aşınma onarımı (B3): Morfolojik kapanma ile kırık modülleri birleştirir."""
+    # MinFilter beyaz çizikleri ve modül kırılmalarını koyulaştırarak kapatır
+    repaired = gray.filter(ImageFilter.MinFilter(3))
+    img = ImageOps.autocontrast(repaired, cutoff=2)
+    scale = 1.0
+    if min(img.size) < _UPSCALE_BELOW_PX:
+        scale = 1.5
+        img = img.resize((int(img.width * 1.5), int(img.height * 1.5)), Image.Resampling.LANCZOS)
     return img, scale
 
 
@@ -93,14 +122,16 @@ def decode_image(
     image: Image.Image,
     *,
     fallback: bool = True,
+    robust_fallback: bool = False,
     crop: tuple[int, int, int, int] | None = None,
     method: str = "B0",
 ) -> DecodeOutcome:
     """Görüntüdeki tüm kodları çözer.
 
-    fallback: B0 hiçbir şey bulamazsa B1'i dener.
-    crop:     (x0, y0, x1, y1) verilirse yalnız o bölge çözülür; koordinatlar yine
-              orijinal görüntüye göre döner (A1 için).
+    fallback:        B0 hiçbir şey bulamazsa B1'i dener.
+    robust_fallback: B1 de bulamazsa B2_GLARE (bant/parlama) ve B3_REPAIR (çizik) dener.
+    crop:            (x0, y0, x1, y1) verilirse yalnız o bölge çözülür; koordinatlar yine
+                     orijinal görüntüye göre döner (A1 için).
     """
     t0 = time.perf_counter()
     gray = ImageOps.exif_transpose(image).convert("L")
@@ -117,10 +148,24 @@ def decode_image(
     codes = _read(region, method, dx=dx, dy=dy)
 
     if not codes and fallback:
+        # Aşama 1: Standart netleştirme ve büyütme (B1)
         b1_method = "B1" if method == "B0" else f"{method}+"
         outcome.methods_tried.append(b1_method)
-        pre, scale = preprocess_b1(region)
-        codes = _read(pre, b1_method, scale=scale, dx=dx, dy=dy)
+        pre1, scale1 = preprocess_b1(region)
+        codes = _read(pre1, b1_method, scale=scale1, dx=dx, dy=dy)
+
+        # Aşama 2 & 3: Zorlu depo hasarları (koli bandı parlaması ve çizikler)
+        if not codes and robust_fallback:
+            b2_method = "B2_GLARE"
+            outcome.methods_tried.append(b2_method)
+            pre2, scale2 = preprocess_b2_glare(region)
+            codes = _read(pre2, b2_method, scale=scale2, dx=dx, dy=dy)
+
+            if not codes:
+                b3_method = "B3_REPAIR"
+                outcome.methods_tried.append(b3_method)
+                pre3, scale3 = preprocess_b3_repair(region)
+                codes = _read(pre3, b3_method, scale=scale3, dx=dx, dy=dy)
 
     outcome.codes = _dedupe(codes)
     outcome.elapsed_ms = (time.perf_counter() - t0) * 1000

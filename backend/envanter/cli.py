@@ -18,6 +18,13 @@ def main() -> None:
 
     sub.add_parser("demo-world", help="Demo deposunu veritabanına ekle")
 
+    sheet = sub.add_parser("print-sheet", help="Yazdırılabilir A4 test şablonu oluştur (PDF/PNG)")
+    sheet.add_argument("-o", "--output", default="depogoz_test_sayfasi.pdf", help="Çıktı dosya yolu")
+    sheet.add_argument("--format", default="PDF", choices=["PDF", "PNG"], help="Dosya biçimi")
+
+    bench = sub.add_parser("benchmark", help="Bozuk/hasarlı QR okuma dayanıklılık testini çalıştır")
+    bench.add_argument("--code", default="KL-992104", help="Test edilecek etiket metni")
+
     args = parser.parse_args()
     if args.cmd == "serve":
         import uvicorn
@@ -29,6 +36,17 @@ def main() -> None:
 
         init_db()
         print(f"Demo deposu hazır (id={ensure_demo_world()})")
+    elif args.cmd == "print-sheet":
+        from .services.test_sheet import save_test_sheet
+
+        out = save_test_sheet(args.output, fmt=args.format)
+        print(f"Yazdırılabilir test sayfası oluşturuldu: {out.resolve()}")
+    elif args.cmd == "benchmark":
+        from .services.qr_benchmark import print_benchmark_table, run_benchmark
+
+        print(f"'{args.code}' etiketi için dayanıklılık benchmarkı çalıştırılıyor...")
+        results = run_benchmark(sample_text=args.code)
+        print_benchmark_table(results)
 
 
 if __name__ == "__main__":

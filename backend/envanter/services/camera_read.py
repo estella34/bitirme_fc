@@ -80,9 +80,24 @@ def read_codes(
 ) -> dict:
     settings = get_settings()
     views = []
-    for i, tile in enumerate(split_views(frame), start=1):
+    if settings.camera_channel == 0:
+        tiles = list(enumerate(split_views(frame), start=1))
+    else:
+        # Tek kamera modu: seçilen kanala tüm kareyi ata, diğerlerine boş kare
+        tiles = []
+        for ch in range(1, 5):
+            if ch == settings.camera_channel:
+                tiles.append((ch, frame))
+            else:
+                tiles.append(
+                    (ch, np.zeros((frame.shape[0] // 2, frame.shape[1] // 2, 3), dtype=np.uint8))
+                )
+
+    for i, tile in tiles:
         img = _to_pil(tile)
-        out = decode_image(img, fallback=settings.decode_fallback)
+        out = decode_image(
+            img, fallback=settings.decode_fallback, robust_fallback=True
+        )
         views.append(
             {
                 "camera": i,
